@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第4章 · LoRA · FC · Fine-tuning</title>
+<style>
+:root {
+  --shell:#e8e8e6;--surface:#fafaf8;--text:#0a0a0a;--text-2:#2a2a2a;--text-mute:#737373;
+  --accent:#002fa7;--accent-soft:rgba(0,47,167,.08);--accent-glow:rgba(0,47,167,.35);
+  --green:#16a34a;--green-soft:rgba(22,163,74,.08);
+  --orange:#ea580c;--orange-soft:rgba(234,88,12,.08);
+  --font-cn:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --font-mono:"JetBrains Mono","SF Mono","Consolas",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;}
+body{display:flex;align-items:center;justify-content:center;font-family:var(--font-cn);}
+.stage{width:min(100vw,177.78vh);height:min(100vh,56.25vw);background:var(--surface);position:relative;overflow:hidden;cursor:pointer;box-shadow:0 20px 80px #00000080;}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;background-image:linear-gradient(rgba(10,10,10,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(10,10,10,.045) 1px,transparent 1px);background-size:64px;}
+.scene{position:absolute;inset:0;z-index:2;}
+.fade-in{animation:fi .6s ease-out both;}@keyframes fi{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.slide-up{animation:su .5s ease-out both;}@keyframes su{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.slide-in{animation:si .5s ease-out both;}@keyframes si{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:translateX(0)}}
+.progress-wrap{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;z-index:10;pointer-events:none;height:32px;}
+.progress{display:flex;gap:4px;align-items:center;opacity:.4;}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .2s;}
+.dot.cur{background:var(--accent);transform:scale(1.3);}
+.dot.done{background:rgba(0,47,167,.5);}
+.step-info{position:fixed;top:12px;right:12px;z-index:10;font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,.4);}
+
+.controls {
+  position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 20;
+  display: flex; gap: 12px; align-items: center; pointer-events: auto;
+}
+.controls button {
+  background: rgba(0,0,0,0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.3); color: #fff; border-radius: 8px;
+  padding: 8px 20px; font-size: 14px; cursor: pointer; transition: all .2s;
+  font-family: var(--font-body, "PingFang SC", sans-serif);
+}
+.controls button:hover { background: rgba(0,47,167,0.5); border-color: var(--accent); }
+.controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+.play-indicator { font-size: 12px; color: rgba(255,255,255,0.5); margin-left: 8px; }
+.subtitle-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 15;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  padding: 40px 40px 16px; text-align: center; pointer-events: none;
+}
+.subtitle-text { color: #fff; font-size: 22px; font-weight: 600; text-shadow: 0 0 20px rgba(0,0,0,0.8); opacity: 0; transition: opacity .3s; }
+.subtitle-text.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage"><div class="scene" id="scene"></div></div>
+<div class="progress-wrap"><div class="progress" id="progress"></div></div>
+<div class="step-info" id="stepInfo"></div>
+
+<script>
+const STEPS = 3;
+
+let isPlaying = false;
+let playTimer = null;
+let isMuted = false;
+let synth = window.speechSynthesis;
+let isMuted = false;
+
+function showSubtitle(text) {
+  var el = document.getElementById('subtitle');
+  if (!el) return;
+  el.textContent = text;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+}
+function hideSubtitle() {
+  var el = document.getElementById('subtitle');
+  if (el) el.classList.remove('show');
+}
+function speak(text) {
+  if (isMuted) return;
+  if (synth.speaking) synth.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN'; u.rate = 1.0; u.pitch = 1.0;
+  var zhVoice = synth.getVoices().find(function(v) { return v.lang.startsWith('zh'); });
+  if (zhVoice) u.voice = zhVoice;
+  synth.speak(u);
+}
+function stopSpeak() { if (synth.speaking) synth.cancel(); }
+
+function startAutoPlay() {
+  if (isPlaying) return;
+  isPlaying = true;
+  document.getElementById('playBtn').textContent = '⏸ 暂停';
+  document.getElementById('statusText').textContent = '自动播放中...';
+  autoNext();
+}
+function stopAutoPlay() {
+  isPlaying = false;
+  if (playTimer) { clearTimeout(playTimer); playTimer = null; }
+  var btn = document.getElementById('playBtn');
+  if (btn) btn.textContent = '▶ 自动播放';
+  document.getElementById('statusText').textContent = '点击或按 → 推进';
+}
+function autoNext() {
+  if (!isPlaying) return;
+  if (step < STEPS - 1) {
+    var checkSpeech = function() {
+      if (!synth.speaking) {
+        playTimer = setTimeout(function() {
+          goNext();
+          var waists = [6,5,7];
+          var waitMs = (step < waists.length) ? waists[step] * 1000 : 5000;
+          playTimer = setTimeout(autoNext, waitMs);
+        }, 1200);
+      } else {
+        playTimer = setTimeout(checkSpeech, 200);
+      }
+    };
+    checkSpeech();
+  } else {
+    stopAutoPlay();
+    document.getElementById('statusText').textContent = '播放完毕 ✓';
+    document.getElementById('playBtn').textContent = '↻ 重播';
+  }
+}
+
+synth.getVoices();
+
+const NARRATIONS = [
+    "Fine-tuning 是动整个模型，用特定领域的数据做二次训练，费用很高，但效果好。LoRA 低秩适配则不动原模型，只在上面加一层外挂适配器，就像遮瑕笔，消费级显卡就能跑。而 RAG 不改模型，只查资料。三种方式各有适用场景。",
+    "Function Calling，函数调用，是 AI 的双手。没有它 AI 只能动嘴，有了它就能动手。你说查天气，AI 识别出要调 getWeather 函数，系统执行后返回数据，AI 再把数据转成自然语言告诉你。它也是 Agent 那双操作工具的手。",
+    "Fine-tuning 和 RAG 的区别，一个改了模型内部的知识，一个靠检索外部资料。Fine-tuning 成本高但知识已经内化，RAG 成本低但每次都要查。选哪个看你想要 AI 记住还是 AI 去查。"
+]; // TODO: 填入每步台词
+const SUBTITLES = [
+    "Fine-tuning 动底妆，LoRA 用遮瑕笔，RAG 翻食谱书",
+    "Function Calling：AI 的双手，能动就能干事",
+    "Fine-tuning 和 RAG 的选择：记住还是去查"
+]; // TODO: 填入每步字幕
+let step = 0;
+
+function renderScene() {
+  const el = document.getElementById('scene');
+  document.getElementById('stepInfo').textContent = `${step+1}/${STEPS}`;
+
+  if (step === 0) {
+    el.innerHTML = `
+      <div class="fade-in" style="display:flex;align-items:center;gap:40px;padding:60px 80px;position:absolute;inset:0;">
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:14px;font-family:var(--font-mono);color:var(--orange);margin-bottom:16px;letter-spacing:.08em;">✗ 动整个模型</div>
+          <div style="width:130px;height:130px;border-radius:18px;background:var(--orange-soft);border:3px solid var(--orange);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:52px;">🎨</div>
+          <div style="font-size:26px;font-weight:700;margin-bottom:6px;">Fine-tuning</div>
+          <div style="font-size:14px;color:var(--text-mute);max-width:220px;margin:0 auto;line-height:1.6;">
+            用特定领域的数据，对预训练好的模型做二次训练
+          </div>
+          <div style="margin-top:16px;font-size:13px;color:var(--orange);font-family:var(--font-mono);background:var(--orange-soft);padding:8px 12px;border-radius:6px;">
+            GPT-4 训练费 &gt; 1 亿美金
+          </div>
+          <div style="margin-top:10px;font-size:14px;color:var(--text-mute);line-height:1.6;text-align:left;max-width:220px;margin-left:auto;margin-right:auto;">
+            <strong style="color:var(--text);">什么时候需要？</strong><br>
+            医疗术语、法律条文、企业客服统一语调
+          </div>
+        </div>
+        <div style="flex:0;"><div style="font-size:44px;color:var(--accent);font-weight:200;">vs</div></div>
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:14px;font-family:var(--font-mono);color:var(--green);margin-bottom:16px;letter-spacing:.08em;">✓ 加外挂适配器</div>
+          <div style="width:130px;height:130px;border-radius:18px;background:var(--green-soft);border:3px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:52px;position:relative;">
+            🔧
+            <div style="position:absolute;bottom:-6px;right:-10px;background:var(--green);color:#fff;font-size:11px;font-family:var(--font-mono);padding:2px 8px;border-radius:4px;">LoRA</div>
+          </div>
+          <div style="font-size:26px;font-weight:700;margin-bottom:6px;">LoRA 低秩适配</div>
+          <div style="font-size:14px;color:var(--text-mute);max-width:220px;margin:0 auto;line-height:1.6;">
+            不动原模型，只加一层外挂适配器
+          </div>
+          <div style="margin-top:16px;font-size:13px;color:var(--green);font-family:var(--font-mono);background:var(--green-soft);padding:8px 12px;border-radius:6px;">
+            消费级显卡就能跑
+          </div>
+          <div class="slide-up" style="margin-top:10px;animation-delay:.3s;">
+            <div style="padding:10px;background:var(--green-soft);border-radius:8px;font-size:14px;color:var(--text-2);line-height:1.6;text-align:left;max-width:220px;margin:0 auto;">
+              <strong>应用场景</strong><br>
+              通用模型 → 医疗/法律/代码专家<br>
+              调整写作风格 · 不动原模型
+            </div>
+          </div>
+          <div class="slide-up" style="margin-top:8px;padding:8px 12px;background:#f5f5f5;border-radius:6px;font-size:13px;color:var(--text-mute);animation-delay:.5s;">
+            <strong>比喻</strong>：Fine-tuning 是改底妆粉底，LoRA 是遮瑕笔
+          </div>
+        </div>
+      </div>`;
+  } else if (step === 1) {
+    el.innerHTML = `
+      <div class="fade-in" style="padding:60px 80px;position:absolute;inset:0;">
+        <div style="font-size:18px;font-family:var(--font-mono);color:var(--text-mute);margin-bottom:4px;">Function Calling · 函数调用</div>
+        <div style="font-size:32px;font-weight:700;margin-bottom:12px;color:var(--text);">
+          <span style="background:var(--accent);color:#fff;border-radius:6px;padding:0 14px;font-size:18px;font-family:var(--font-mono);margin-right:12px;">FC</span>
+          Function Calling — AI 的双手
+        </div>
+        <div style="font-size:15px;color:var(--text-2);margin-bottom:28px;line-height:1.6;">
+          没有这个的 AI 只能动嘴，有了它 AI 就能动手——查天气、订票、发邮件、执行代码。<br>
+          也叫 Tool Calling，本质是让大模型调用外部函数和 API 的能力。
+        </div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin-bottom:28px;">
+          <div style="background:var(--accent-soft);border:2px solid var(--accent);border-radius:12px;padding:16px 20px;text-align:center;">
+            <div style="font-size:24px;margin-bottom:4px;">🎤</div>
+            <div style="font-size:16px;font-weight:600;">"北京天气"</div>
+          </div>
+          <span style="font-size:28px;color:var(--accent);">→</span>
+          <div style="background:#1e1e2e;border-radius:10px;padding:12px 16px;text-align:center;">
+            <div style="font-size:11px;color:#a6adc8;font-family:var(--font-mono);">大模型识别意图</div>
+            <div style="font-size:14px;color:#89b4fa;font-family:var(--font-mono);font-weight:700;">getWeather(city)</div>
+          </div>
+          <span style="font-size:28px;color:var(--accent);">→</span>
+          <div style="background:#1e1e2e;border-radius:10px;padding:12px 16px;text-align:center;">
+            <div style="font-size:11px;color:#a6adc8;font-family:var(--font-mono);">系统执行函数</div>
+            <div style="font-size:14px;color:#a6e3a1;font-family:var(--font-mono);font-weight:700;">→ 返回 {temp:28}</div>
+          </div>
+          <span style="font-size:28px;color:var(--green);">→</span>
+          <div style="background:var(--green-soft);border:2px solid var(--green);border-radius:12px;padding:16px 20px;text-align:center;">
+            <div style="font-size:24px;margin-bottom:4px;">💬</div>
+            <div style="font-size:16px;font-weight:600;color:var(--green);">"北京今天 28 度"</div>
+          </div>
+        </div>
+        <div class="slide-up" style="display:flex;gap:20px;animation-delay:.4s;">
+          <div style="flex:1;padding:16px;background:#f0f5ff;border-radius:10px;">
+            <div style="font-size:15px;font-weight:600;margin-bottom:6px;">完整流程</div>
+            <div style="font-size:14px;color:var(--text-mute);line-height:2;">
+              你说"查天气" → AI 识别要调 getWeather<br>
+              → 系统执行 getWeather → 拿到结果<br>
+              → AI 把数据转成自然语言 → 你听到"28度"
+            </div>
+          </div>
+          <div style="flex:1;padding:16px;background:#f5f5f5;border-radius:10px;">
+            <div style="font-size:15px;font-weight:600;margin-bottom:6px;">能干什么？</div>
+            <div style="font-size:14px;color:var(--text-mute);line-height:2;">
+              查天气 · 订机票 · 发送邮件<br>
+              执行代码 · 创建日历事件<br>
+              <span style="color:var(--accent);">它就是 Agent 的那双手</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  } else if (step === 2) {
+    el.innerHTML = `
+      <div class="fade-in" style="position:absolute;inset:0;padding:60px 80px;">
+        <div style="font-size:18px;font-family:var(--font-mono);color:var(--text-mute);margin-bottom:4px;">Fine-tuning · 微调</div>
+        <div style="font-size:32px;font-weight:700;margin-bottom:20px;color:var(--text);">
+          <span style="background:var(--accent);color:#fff;border-radius:6px;padding:0 14px;font-size:18px;font-family:var(--font-mono);margin-right:12px;">FT</span>
+          Fine-tuning 微调
+        </div>
+        <div style="font-size:15px;color:var(--text-2);margin-bottom:28px;max-width:600px;line-height:1.6;">
+          用特定领域数据对预训练模型做二次训练。改动大、成本高、但效果好。<br>
+          Fine-tuning 改整个模型，LoRA 只加外挂适配器，RAG 不改模型只查资料——三者各有适用场景。
+        </div>
+        <div style="display:flex;gap:28px;margin-bottom:24px;">
+          <div style="flex:1;display:flex;flex-direction:column;gap:0;">
+            <div style="display:grid;grid-template-columns:120px 1fr 1fr;gap:0;background:var(--accent);color:#fff;border-radius:8px 8px 0 0;">
+              <div style="padding:12px 14px;font-weight:600;font-size:14px;">方式</div>
+              <div style="padding:12px 14px;font-weight:600;font-size:14px;text-align:center;">Fine-tuning</div>
+              <div style="padding:12px 14px;font-weight:600;font-size:14px;text-align:center;">RAG</div>
+            </div>
+            ${[
+              ['改模型', '✅ 改整个模型', '❌ 不改模型'],
+              ['成本', '💰 高（全量训练）', '💰 低（检索成本）'],
+              ['知识范围', '📚 记住领域知识', '📰 查最新资料'],
+              ['效果', '👍 好（内化知识）', '👍 好（精准召回）'],
+              ['适合场景', '🏥 医疗/法律术语', '📋 最新信息/企业文档']
+            ].map((row, ri) => `
+              <div class="slide-in" style="display:grid;grid-template-columns:120px 1fr 1fr;gap:0;background:${ri%2===0?'var(--surface-2)':'#fff'};animation-delay:${ri*0.1}s;">
+                <div style="padding:12px 14px;font-size:14px;font-weight:600;color:var(--text);">${row[0]}</div>
+                <div style="padding:12px 14px;font-size:14px;color:var(--text-2);text-align:center;">${row[1]}</div>
+                <div style="padding:12px 14px;font-size:14px;color:var(--text-2);text-align:center;">${row[2]}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        <div class="slide-up" style="padding:14px 20px;background:var(--accent-soft);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;font-size:15px;color:var(--text-2);line-height:1.6;animation-delay:.6s;">
+          <strong>一句话总结三种方式的区别</strong><br>
+          Fine-tuning 改整体（成本高效果好）→ 送厨师去进修<br>
+          LoRA 只加外挂（成本低效果尚可）→ 给菜刀磨专用刀片<br>
+          RAG 不改模型（查资料精准召回）→ 做菜时随时翻食谱书
+        </div>
+      </div>`;
+  }
+  renderDots();
+}
+
+function renderDots() {
+  document.getElementById('progress').innerHTML = Array.from({length:STEPS}, (_,i) =>
+    `<div class="dot ${i===step?'cur':i<step?'done':''}"></div>`
+  ).join('');
+}
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); if (isPlaying) stopAutoPlay(); if (step<STEPS-1) { step++; renderScene(); } }
+  if (e.key==='ArrowLeft'||e.key==='Backspace') { e.preventDefault(); if (isPlaying) stopAutoPlay(); stopSpeak(); if (step>0) { step--; renderScene(); } hideSubtitle(); }
+});
+document.getElementById('stage').addEventListener('click', function() { if (step<STEPS-1) { if (isPlaying) stopAutoPlay(); step++; renderScene(); } });
+setTimeout(function() {
+  var pb = document.getElementById('playBtn');
+  var mb = document.getElementById('muteBtn');
+  if (pb) pb.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (pb.textContent.indexOf('↻') >= 0) { step = 0; stopSpeak(); renderScene(); renderDots(); hideSubtitle(); startAutoPlay(); return; }
+    if (isPlaying) stopAutoPlay(); else startAutoPlay();
+  });
+  if (mb) mb.addEventListener('click', function(e) {
+    e.stopPropagation();
+    isMuted = !isMuted;
+    if (isMuted) { stopSpeak(); mb.textContent = '🔇 静音'; }
+    else { mb.textContent = '🔊 语音'; }
+  });
+  if (NARRATIONS[0]) { setTimeout(function() { showSubtitle(SUBTITLES[0] || ''); }, 500); }
+}, 100);
+renderScene();
+</script>
+</body>
+</html>

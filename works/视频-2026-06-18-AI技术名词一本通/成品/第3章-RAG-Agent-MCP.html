@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第3章 · RAG · Agent · MCP</title>
+<style>
+:root {
+  --shell:#e8e8e6;--surface:#fafaf8;--text:#0a0a0a;--text-2:#2a2a2a;--text-mute:#737373;--text-faint:#aaa;
+  --accent:#002fa7;--accent-soft:rgba(0,47,167,.08);--accent-glow:rgba(0,47,167,.35);
+  --green:#16a34a;--green-soft:rgba(22,163,74,.08);
+  --orange:#ea580c;--orange-soft:rgba(234,88,12,.08);
+  --font-cn:"PingFang SC","Microsoft YaHei","Noto Sans SC",sans-serif;
+  --font-mono:"JetBrains Mono","SF Mono","Consolas",monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;height:100%;overflow:hidden;background:#000;}
+body{display:flex;align-items:center;justify-content:center;font-family:var(--font-cn);}
+.stage{width:min(100vw,177.78vh);height:min(100vh,56.25vw);background:var(--surface);position:relative;overflow:hidden;cursor:pointer;box-shadow:0 20px 80px #00000080;}
+.stage::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:1;background-image:linear-gradient(rgba(10,10,10,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(10,10,10,.045) 1px,transparent 1px);background-size:64px;}
+.scene{position:absolute;inset:0;z-index:2;}
+.fade-in{animation:fi .6s ease-out both;}@keyframes fi{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.slide-up{animation:su .5s ease-out both;}@keyframes su{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.slide-in{animation:si .5s ease-out both;}@keyframes si{from{opacity:0;transform:translateX(-24px)}to{opacity:1;transform:translateX(0)}}
+.progress-wrap{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:center;z-index:10;pointer-events:none;height:32px;}
+.progress{display:flex;gap:4px;align-items:center;opacity:.4;}
+.dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.3);transition:all .2s;}
+.dot.cur{background:var(--accent);transform:scale(1.3);}
+.dot.done{background:rgba(0,47,167,.5);}
+.step-info{position:fixed;top:12px;right:12px;z-index:10;font-family:var(--font-mono);font-size:11px;color:rgba(255,255,255,.4);}
+
+.controls {
+  position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); z-index: 20;
+  display: flex; gap: 12px; align-items: center; pointer-events: auto;
+}
+.controls button {
+  background: rgba(0,0,0,0.15); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.3); color: #fff; border-radius: 8px;
+  padding: 8px 20px; font-size: 14px; cursor: pointer; transition: all .2s;
+  font-family: var(--font-body, "PingFang SC", sans-serif);
+}
+.controls button:hover { background: rgba(0,47,167,0.5); border-color: var(--accent); }
+.controls button:disabled { opacity: 0.3; cursor: not-allowed; }
+.play-indicator { font-size: 12px; color: rgba(255,255,255,0.5); margin-left: 8px; }
+.subtitle-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 15;
+  background: linear-gradient(transparent, rgba(0,0,0,0.85));
+  padding: 40px 40px 16px; text-align: center; pointer-events: none;
+}
+.subtitle-text { color: #fff; font-size: 22px; font-weight: 600; text-shadow: 0 0 20px rgba(0,0,0,0.8); opacity: 0; transition: opacity .3s; }
+.subtitle-text.show { opacity: 1; }
+</style>
+</head>
+<body>
+<div class="stage" id="stage"><div class="scene" id="scene"></div></div>
+<div class="progress-wrap"><div class="progress" id="progress"></div></div>
+<div class="step-info" id="stepInfo"></div>
+
+<script>
+const STEPS = 3;
+
+let isPlaying = false;
+let playTimer = null;
+let isMuted = false;
+let synth = window.speechSynthesis;
+let isMuted = false;
+
+function showSubtitle(text) {
+  var el = document.getElementById('subtitle');
+  if (!el) return;
+  el.textContent = text;
+  el.classList.remove('show');
+  void el.offsetWidth;
+  el.classList.add('show');
+}
+function hideSubtitle() {
+  var el = document.getElementById('subtitle');
+  if (el) el.classList.remove('show');
+}
+function speak(text) {
+  if (isMuted) return;
+  if (synth.speaking) synth.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'zh-CN'; u.rate = 1.0; u.pitch = 1.0;
+  var zhVoice = synth.getVoices().find(function(v) { return v.lang.startsWith('zh'); });
+  if (zhVoice) u.voice = zhVoice;
+  synth.speak(u);
+}
+function stopSpeak() { if (synth.speaking) synth.cancel(); }
+
+function startAutoPlay() {
+  if (isPlaying) return;
+  isPlaying = true;
+  document.getElementById('playBtn').textContent = '⏸ 暂停';
+  document.getElementById('statusText').textContent = '自动播放中...';
+  autoNext();
+}
+function stopAutoPlay() {
+  isPlaying = false;
+  if (playTimer) { clearTimeout(playTimer); playTimer = null; }
+  var btn = document.getElementById('playBtn');
+  if (btn) btn.textContent = '▶ 自动播放';
+  document.getElementById('statusText').textContent = '点击或按 → 推进';
+}
+function autoNext() {
+  if (!isPlaying) return;
+  if (step < STEPS - 1) {
+    var checkSpeech = function() {
+      if (!synth.speaking) {
+        playTimer = setTimeout(function() {
+          goNext();
+          var waists = [6,5,7];
+          var waitMs = (step < waists.length) ? waists[step] * 1000 : 5000;
+          playTimer = setTimeout(autoNext, waitMs);
+        }, 1200);
+      } else {
+        playTimer = setTimeout(checkSpeech, 200);
+      }
+    };
+    checkSpeech();
+  } else {
+    stopAutoPlay();
+    document.getElementById('statusText').textContent = '播放完毕 ✓';
+    document.getElementById('playBtn').textContent = '↻ 重播';
+  }
+}
+
+synth.getVoices();
+
+const NARRATIONS = [
+    "RAG，检索增强生成。大模型的知识是背出来的，考完就忘。RAG 的思路是：你提问的时候，先去知识库里搜相关内容，再把搜到的连问题一起喂给 AI。中间需要向量数据库把文字转成数学向量、需要 Embedding 做语义搜索、需要把文档切成小块。不是让 AI 背下来，是让 AI 学会不知道就去查。",
+    "Agent 智能体。普通 AI 你说一步它做一步，只回答不动手。Agent 呢，给个目标就从头干到尾。它能把大目标拆成小步骤，记住中间结果，调用各类工具，执行完了看结果再调整。这套循环叫 ReAct 框架，思考、行动、观察、再思考。",
+    "MCP，模型上下文协议，Anthropic 2024 年底提出的标准。以前每个 AI 连外部工具都要定制开发，就像每个设备都有自己的充电线。MCP 统一了标准，像 USB-C 一样，一个接口插所有。文件系统、数据库、API、搜索引擎，只要写了 MCP Server 就能直接调。"
+]; // TODO: 填入每步台词
+const SUBTITLES = [
+    "RAG 检索增强生成：不知道就去查，不是硬背",
+    "Agent 智能体：给目标就从头干到尾，不用一步步教",
+    "MCP 协议：AI 世界的 USB-C，一个接口连通所有工具"
+]; // TODO: 填入每步字幕
+let step = 0;
+
+function renderScene() {
+  const el = document.getElementById('scene');
+  document.getElementById('stepInfo').textContent = `${step+1}/${STEPS}`;
+
+  if (step === 0) {
+    el.innerHTML = `
+      <div class="fade-in" style="position:absolute;inset:0;padding:60px 80px;">
+        <div style="font-size:18px;font-family:var(--font-mono);color:var(--text-mute);margin-bottom:6px;">RAG · Retrieval-Augmented Generation</div>
+        <div style="font-size:32px;font-weight:700;margin-bottom:16px;color:var(--text);">
+          <span style="background:var(--accent);color:#fff;border-radius:6px;padding:0 14px;font-size:18px;font-family:var(--font-mono);margin-right:12px;vertical-align:middle;">RAG</span>
+          检索增强生成
+        </div>
+        <div style="font-size:16px;color:var(--text-2);margin-bottom:24px;line-height:1.7;max-width:660px;">
+          <strong>为什么需要 RAG？</strong> 大模型的知识是背出来的，考完就忘了。你问它公司内部规定、昨天的新闻，它答不上来。<br>
+          解决思路很简单——你提问的时候，先去知识库里搜相关内容，然后把搜到的东西连你的问题一起喂给 AI，让它看着资料回答。
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:28px;">
+          ${[
+            {icon:'👤',label:'用户提问'},
+            {icon:'🔍',label:'搜向量数据库'},
+            {icon:'📄',label:'找最相关内容'},
+            {icon:'🧠',label:'LLM 看资料回答'},
+            {icon:'💬',label:'基于资料回答'}
+          ].map((c,i) => `
+            <div style="background:${i===4?'var(--green-soft)':'#fff'};border:2px solid ${i===4?'var(--green)':'var(--accent)'};border-radius:12px;padding:14px 18px;text-align:center;">
+              <div style="font-size:24px;margin-bottom:2px;">${c.icon}</div>
+              <div style="font-size:15px;font-weight:600;color:${i===4?'var(--green)':'var(--text)'};">${c.label}</div>
+            </div>
+            ${i<4?'<span style="font-size:22px;color:var(--accent);">→</span>':''}
+          `).join('')}
+        </div>
+        <div style="display:flex;gap:16px;margin-bottom:20px;">
+          ${[
+            {icon:'🔢',label:'向量数据库',desc:'把文字转成数学向量，按语义相似度检索。不是关键词匹配，是理解意思后搜索。'},
+            {icon:'🔤',label:'Embedding',desc:'将人类语言转换成数学向量的技术。相似语义的文字在向量空间里靠得近，计算机才能"理解"意思。'},
+            {icon:'✂️',label:'文档分块',desc:'把长文档按语义切小块。每块包含一个完整意思，确保检索精准，避免关键信息被大段文字淹没。'}
+          ].map((c,i) => `
+            <div class="slide-in" style="flex:1;background:var(--accent-soft);border-radius:12px;padding:18px;animation-delay:${i*0.25}s;">
+              <div style="font-size:26px;margin-bottom:6px;">${c.icon}</div>
+              <div style="font-size:17px;font-weight:600;color:var(--accent);margin-bottom:6px;">${c.label}</div>
+              <div style="font-size:14px;color:var(--text-mute);line-height:1.6;">${c.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+        <div class="slide-up" style="padding:14px 20px;background:#f5f5f5;border-radius:8px;font-size:15px;color:var(--text-2);line-height:1.6;animation-delay:1s;">
+          💡 <strong>典型场景</strong>：智能客服实时翻说明书 · 企业内部知识库 · 法律条文查询<br>
+          <span style="color:var(--text-mute);">RAG 的核心思想：不是让 AI 背下来，而是让 AI 学会"我不知道就去查"</span>
+        </div>
+      </div>`;
+  } else if (step === 1) {
+    el.innerHTML = `
+      <div class="fade-in" style="display:flex;align-items:center;justify-content:center;padding:70px 80px;gap:0;position:absolute;inset:0;">
+        <div style="flex:1;padding:40px;border-right:2px solid var(--rule);text-align:center;">
+          <div style="font-size:15px;font-family:var(--font-mono);color:var(--orange);margin-bottom:20px;letter-spacing:.1em;">▌你说一步，它做一步</div>
+          <div style="width:90px;height:90px;border-radius:50%;background:var(--orange-soft);border:3px solid var(--orange);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:40px;">🤖</div>
+          <div style="font-size:26px;font-weight:700;margin-bottom:12px;">普通 AI</div>
+          <div style="padding:18px;background:var(--orange-soft);border-radius:10px;margin:0 auto;max-width:300px;text-align:left;">
+            <div style="font-size:15px;color:var(--text-2);">👤 "帮我订一张去北京的机票"</div>
+            <hr style="border:none;border-top:1px dashed var(--orange);margin:12px 0;">
+            <div style="font-size:14px;color:var(--text-mute);line-height:1.7;">
+              🤖 "好的，已为您列出以下选项。请前往携程自行操作。"<br>
+              <span style="color:var(--orange);">→ 只回答，不动手</span>
+            </div>
+          </div>
+        </div>
+        <div style="flex:1;padding:40px;text-align:center;">
+          <div style="font-size:15px;font-family:var(--font-mono);color:var(--green);margin-bottom:20px;letter-spacing:.1em;">▌给目标，从头干到尾</div>
+          <div style="width:90px;height:90px;border-radius:50%;background:var(--green-soft);border:3px solid var(--green);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:40px;">⚡</div>
+          <div style="font-size:26px;font-weight:700;margin-bottom:12px;">Agent 智能体</div>
+          <div style="padding:18px;background:var(--green-soft);border-radius:10px;margin:0 auto;max-width:300px;text-align:left;">
+            <div style="font-size:15px;color:var(--text-2);">👤 "帮我订一张去北京的机票"</div>
+            <hr style="border:none;border-top:1px dashed var(--green);margin:12px 0;">
+            <div style="font-size:14px;color:var(--text-mute);line-height:1.8;">
+              🔄 搜索所有航班 → 比较价格时长<br>
+              → 选最优方案 → 填乘客信息<br>
+              → 下单支付 → 发确认信息给你<br>
+              <span style="color:var(--green);">→ 自己干完所有事情 ✅</span>
+            </div>
+          </div>
+          <div class="slide-up" style="margin-top:16px;max-width:300px;margin-left:auto;margin-right:auto;animation-delay:.4s;">
+            <div style="font-size:14px;color:var(--text-2);background:#f0fdf4;padding:14px;border-radius:8px;line-height:1.7;text-align:left;">
+              <strong>Agent 四大能力</strong><br>
+              🎯 规划 — 大目标拆成小步骤<br>
+              💾 记忆 — 记住上下文和中间结果<br>
+              🛠️ 工具调用 — 查数据库、调 API<br>
+              👀 行动观察 — 执行→看结果→调整→继续<br>
+              <span style="font-size:13px;color:var(--text-mute);">这套循环业界叫 ReAct 框架：思考→行动→观察→再思考</span>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  } else if (step === 2) {
+    el.innerHTML = `
+      <div class="fade-in" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 80px;position:absolute;inset:0;">
+        <div style="font-size:18px;font-family:var(--font-mono);color:var(--text-mute);margin-bottom:4px;">MCP · Model Context Protocol</div>
+        <div style="font-size:32px;font-weight:700;margin-bottom:6px;color:var(--text);">
+          <span style="background:var(--accent);color:#fff;border-radius:6px;padding:0 14px;font-size:18px;font-family:var(--font-mono);margin-right:12px;">MCP</span>
+          模型上下文协议
+        </div>
+        <div style="font-size:16px;color:var(--text-mute);margin-bottom:8px;">由 Anthropic 在 2024 年底提出</div>
+        <div style="font-size:16px;color:var(--text-2);margin-bottom:28px;text-align:center;line-height:1.7;max-width:620px;">
+          以前每个 AI 连接外部工具都要定制开发——就像每个设备都有自己的充电线。<br>
+          <strong>MCP 就是 AI 世界的 USB-C 接口。</strong> MCP Server 包装工具，MCP Client 按协议调用，不用再一对一对接了。
+        </div>
+        <div style="position:relative;width:520px;height:220px;display:flex;align-items:center;justify-content:center;">
+          <div style="width:130px;height:65px;border-radius:10px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;box-shadow:0 4px 24px var(--accent-glow);z-index:2;letter-spacing:.05em;">MCP</div>
+          ${[
+            {label:'文件系统',icon:'📁',top:'0',left:'0'},
+            {label:'数据库',icon:'🗄️',top:'0',right:'0'},
+            {label:'第三方 API',icon:'🔌',bottom:'0',left:'10px'},
+            {label:'搜索引擎',icon:'🔍',bottom:'0',right:'10px'}
+          ].map((d,i) => `
+            <div class="slide-up" style="position:absolute;top:${d.top||'auto'};bottom:${d.bottom||'auto'};left:${d.left||'auto'};right:${d.right||'auto'};animation-delay:${i*0.2}s;background:#fff;border:1px solid var(--rule);border-radius:10px;padding:10px 18px;display:flex;align-items:center;gap:10px;font-size:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);">
+              <span style="font-size:22px;">${d.icon}</span>${d.label}
+            </div>
+          `).join('')}
+          <svg style="position:absolute;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;" viewBox="0 0 520 220">
+            <line x1="70" y1="55" x2="195" y2="110" stroke="#ccc" stroke-width="2" stroke-dasharray="6,4"/>
+            <line x1="450" y1="55" x2="325" y2="110" stroke="#ccc" stroke-width="2" stroke-dasharray="6,4"/>
+            <line x1="70" y1="175" x2="195" y2="110" stroke="#ccc" stroke-width="2" stroke-dasharray="6,4"/>
+            <line x1="450" y1="175" x2="325" y2="110" stroke="#ccc" stroke-width="2" stroke-dasharray="6,4"/>
+          </svg>
+        </div>
+        <div class="slide-up" style="margin-top:24px;padding:16px 24px;background:#f5f5f5;border-radius:8px;text-align:center;font-size:15px;color:var(--text-2);line-height:1.6;animation-delay:.8s;">
+          <strong>已支持的主流框架</strong><br>
+          <span style="font-family:var(--font-mono);font-size:14px;color:var(--text-mute);">Claude · LangChain · Vercel AI SDK</span><br>
+          <span style="font-size:13px;color:var(--text-faint);">截至 2026 年，MCP 已基本成为 AI 工具调用的行业标准</span>
+        </div>
+      </div>`;
+  }
+  renderDots();
+}
+
+function renderDots() {
+  document.getElementById('progress').innerHTML = Array.from({length:STEPS}, (_,i) =>
+    `<div class="dot ${i===step?'cur':i<step?'done':''}"></div>`
+  ).join('');
+}
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key===' ') { e.preventDefault(); if (isPlaying) stopAutoPlay(); if (step<STEPS-1) { step++; renderScene(); } }
+  if (e.key==='ArrowLeft'||e.key==='Backspace') { e.preventDefault(); if (isPlaying) stopAutoPlay(); stopSpeak(); if (step>0) { step--; renderScene(); } hideSubtitle(); }
+});
+document.getElementById('stage').addEventListener('click', function() { if (step<STEPS-1) { if (isPlaying) stopAutoPlay(); step++; renderScene(); } });
+setTimeout(function() {
+  var pb = document.getElementById('playBtn');
+  var mb = document.getElementById('muteBtn');
+  if (pb) pb.addEventListener('click', function(e) {
+    e.stopPropagation();
+    if (pb.textContent.indexOf('↻') >= 0) { step = 0; stopSpeak(); renderScene(); renderDots(); hideSubtitle(); startAutoPlay(); return; }
+    if (isPlaying) stopAutoPlay(); else startAutoPlay();
+  });
+  if (mb) mb.addEventListener('click', function(e) {
+    e.stopPropagation();
+    isMuted = !isMuted;
+    if (isMuted) { stopSpeak(); mb.textContent = '🔇 静音'; }
+    else { mb.textContent = '🔊 语音'; }
+  });
+  if (NARRATIONS[0]) { setTimeout(function() { showSubtitle(SUBTITLES[0] || ''); }, 500); }
+}, 100);
+renderScene();
+</script>
+</body>
+</html>

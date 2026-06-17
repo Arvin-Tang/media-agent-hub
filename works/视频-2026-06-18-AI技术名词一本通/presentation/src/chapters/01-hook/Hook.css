@@ -1,0 +1,132 @@
+/* ─── Hook chapter ─── */
+
+/* ─── Stage ─── */
+.hk-stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Step 0: Rain words ─── */
+.hk-rain {
+  position: absolute;
+  inset: 0;
+}
+
+.hk-rain-word {
+  position: absolute;
+  top: -40px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--accent);
+  opacity: 0;
+  animation: hk-drop linear infinite;
+  white-space: nowrap;
+}
+
+@keyframes hk-drop {
+  0%   { transform: translateY(-40px); opacity: 0; }
+  10%  { opacity: 0.7; }
+  90%  { opacity: 0.7; }
+  100% { transform: translateY(1120px); opacity: 0; }
+}
+
+/* ─── Step 1: "别慌" ─── */
+.hk-calm {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.hk-calm--enter {
+  animation: hk-fade-in 0.6s ease-out both;
+}
+
+.hk-calm--visible {
+  opacity: 1;
+}
+
+.hk-calm-title {
+  font-family: var(--font-display-cn);
+  font-weight: 200;
+  font-size: 240px;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+  margin: 0;
+  text-shadow: 0 0 60px var(--accent-glow), 0 0 120px var(--accent-glow);
+}
+
+/* ─── Step 2: LLM reveal ─── */
+.hk-llm {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: hk-fade-in 0.8s ease-out both;
+}
+
+.hk-llm-icon {
+  width: 140px;
+  height: 140px;
+  margin-bottom: 40px;
+}
+
+.hk-cracks {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 520px;
+}
+
+.hk-crack {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  opacity: 0;
+  animation: hk-crack-in 0.5s ease-out both;
+}
+
+.hk-crack-line {
+  width: 3px;
+  height: 48px;
+  background: var(--accent);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.hk-crack-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.hk-crack-label {
+  font-family: var(--font-display-cn);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.hk-crack-desc {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text-mute);
+  line-height: 1.3;
+}
+
+@keyframes hk-fade-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes hk-crack-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
