@@ -1,0 +1,688 @@
+/* ─── Pitfalls chapter ─── */
+
+/* ─── Stage ─── */
+.pf-stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Shared: kicker ─── */
+.pf-kicker {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: pf-fade-down var(--dur-base) linear both;
+}
+
+.pf-kicker-line {
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.pf-kicker-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+/* ─── Shared: pitfall number ─── */
+.pf-pitfall-num {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+  margin-bottom: 12px;
+}
+
+/* ─── Shared: pitfall title ─── */
+.pf-pitfall-title {
+  font-family: var(--font-display-cn);
+  font-size: 80px;
+  font-weight: 200;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  line-height: 1.1;
+  margin-bottom: 24px;
+}
+
+/* ─── Shared: pitfall description ─── */
+.pf-pitfall-desc {
+  font-family: var(--font-display-cn);
+  font-size: 22px;
+  font-weight: 200;
+  color: var(--text-mute);
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  margin-bottom: 32px;
+}
+
+/* ─── Shared: pitfall fix ─── */
+.pf-pitfall-fix {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding-top: 20px;
+  border-top: 1px solid var(--rule);
+  max-width: 520px;
+}
+
+.pf-pitfall-fix-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+.pf-pitfall-fix-value {
+  font-family: var(--font-display-cn);
+  font-size: 26px;
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: 0.03em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 0: 上下文丢失 — broken chain
+ * Animation: left text slides up, right SVG fades in, X mark pops
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.pf-context-loss {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pf-context-body {
+  flex: 1;
+  display: flex;
+  gap: 60px;
+  align-items: center;
+}
+
+.pf-context-left {
+  flex: 0 0 420px;
+  display: flex;
+  flex-direction: column;
+  animation: pf-slide-up var(--dur-cinematic) cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.pf-pitfall-count {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.pf-pitfall-count-num {
+  font-family: var(--font-display-en);
+  font-size: 96px;
+  font-weight: 200;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  line-height: 0.9;
+}
+
+.pf-pitfall-count-label {
+  font-family: var(--font-display-cn);
+  font-size: 28px;
+  font-weight: 200;
+  color: var(--text-mute);
+  letter-spacing: 0.05em;
+}
+
+.pf-context-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  animation: pf-fade-in var(--dur-cinematic) cubic-bezier(0.19, 1, 0.22, 1) both;
+  animation-delay: 0.3s;
+}
+
+.pf-chain-svg {
+  width: 100%;
+  max-width: 720px;
+  height: auto;
+}
+
+/* ── Chain node animations ── */
+.pf-chain-node--claude {
+  animation: pf-node-glow var(--dur-slow) linear both;
+  animation-delay: 0.5s;
+}
+
+.pf-chain-node--gpt {
+  animation: pf-node-dim var(--dur-slow) linear both;
+  animation-delay: 1.2s;
+}
+
+/* ── Chain link animations ── */
+.pf-chain-link--1 {
+  animation: pf-draw var(--dur-base) linear both;
+  animation-delay: 0.8s;
+}
+
+.pf-chain-link--2 {
+  animation: pf-draw var(--dur-base) linear both;
+  animation-delay: 1.5s;
+}
+
+/* ── Break zone animation ── */
+.pf-chain-break {
+  animation: pf-pop-in var(--dur-base) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 1.1s;
+}
+
+.pf-chain-x {
+  animation: pf-x-stamp var(--dur-base) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 1.3s;
+  transform-origin: 360px 220px;
+}
+
+/* ── Context bubble (lost) animation ── */
+.pf-context-bubble--lost {
+  animation: pf-bubble-fade var(--dur-slow) linear both;
+  animation-delay: 0.6s;
+}
+
+.pf-context-arrow {
+  animation: pf-arrow-dash var(--dur-slow) linear both;
+  animation-delay: 1.0s;
+}
+
+/* ── Caption ─── */
+.pf-context-caption {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: pf-fade-up var(--dur-base) linear both;
+  animation-delay: 1.8s;
+}
+
+.pf-caption-bracket {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  color: var(--text-faint);
+}
+
+.pf-caption-text {
+  font-family: var(--font-display-cn);
+  font-size: 16px;
+  font-weight: 200;
+  color: var(--text-mute);
+  letter-spacing: 0.03em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 1: 成本叠加 — stacking bills
+ * Animation: left text slides up, bills stack from bottom to top
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.pf-cost-stack {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pf-cost-body {
+  flex: 1;
+  display: flex;
+  gap: 60px;
+  align-items: center;
+}
+
+.pf-cost-left {
+  flex: 0 0 420px;
+  display: flex;
+  flex-direction: column;
+  animation: pf-slide-up var(--dur-cinematic) cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.pf-cost-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pf-fade-in var(--dur-cinematic) cubic-bezier(0.19, 1, 0.22, 1) both;
+  animation-delay: 0.3s;
+}
+
+.pf-cost-svg {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+}
+
+/* ── Bill stack animations (bottom-up) ── */
+.pf-bill--1 {
+  animation: pf-bill-slide var(--dur-slow) cubic-bezier(0.19, 1, 0.22, 1) both;
+  animation-delay: 0.5s;
+}
+
+.pf-bill--2 {
+  animation: pf-bill-slide var(--dur-slow) cubic-bezier(0.19, 1, 0.22, 1) both;
+  animation-delay: 0.9s;
+}
+
+.pf-bill--3 {
+  animation: pf-bill-slide-accent var(--dur-slow) cubic-bezier(0.19, 1, 0.22, 1) both;
+  animation-delay: 1.3s;
+}
+
+/* ── Total bracket ── */
+.pf-cost-total {
+  animation: pf-fade-in var(--dur-base) linear both;
+  animation-delay: 1.8s;
+}
+
+/* ── Versus line ── */
+.pf-cost-versus {
+  animation: pf-fade-up var(--dur-base) linear both;
+  animation-delay: 2.1s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 2: 过度工程化 — sledgehammer for a fly
+ * Animation: left text slides up, right SVG draws progressively
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.pf-over-engineer {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pf-oe-body {
+  flex: 1;
+  display: flex;
+  gap: 60px;
+  align-items: center;
+}
+
+.pf-oe-left {
+  flex: 0 0 420px;
+  display: flex;
+  flex-direction: column;
+  animation: pf-slide-up var(--dur-cinematic) cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.pf-oe-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pf-fade-in var(--dur-cinematic) cubic-bezier(0.19, 1, 0.22, 1) both;
+  animation-delay: 0.3s;
+}
+
+.pf-oe-svg {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+}
+
+/* ── Question box ── */
+.pf-oe-question {
+  animation: pf-fade-in var(--dur-base) linear both;
+  animation-delay: 0.5s;
+}
+
+/* ── Arrows ── */
+.pf-oe-arrows {
+  animation: pf-draw var(--dur-slow) linear both;
+  animation-delay: 0.8s;
+}
+
+/* ── Models ── */
+.pf-oe-model--a {
+  animation: pf-node-dim var(--dur-slow) linear both;
+  animation-delay: 1.0s;
+}
+
+.pf-oe-model--b {
+  animation: pf-node-dim var(--dur-slow) linear both;
+  animation-delay: 1.2s;
+}
+
+.pf-oe-model--c {
+  animation: pf-node-dim var(--dur-slow) linear both;
+  animation-delay: 1.4s;
+}
+
+/* ── Consensus ── */
+.pf-oe-consensus {
+  animation: pf-draw var(--dur-base) linear both;
+  animation-delay: 1.6s;
+}
+
+/* ── Result ── */
+.pf-oe-result {
+  animation: pf-fade-in var(--dur-base) linear both;
+  animation-delay: 1.8s;
+}
+
+/* ── Overkill stamp ── */
+.pf-oe-stamp {
+  animation: pf-stamp-in var(--dur-slow) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 2.0s;
+  transform-origin: 300px 395px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 3: 选择困难症 — model selection vortex
+ * Animation: left text slides up, vortex fades in with swirling effect
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.pf-choice-paralysis {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pf-cp-body {
+  flex: 1;
+  display: flex;
+  gap: 60px;
+  align-items: center;
+}
+
+.pf-cp-left {
+  flex: 0 0 420px;
+  display: flex;
+  flex-direction: column;
+  animation: pf-slide-up var(--dur-cinematic) cubic-bezier(0.19, 1, 0.22, 1) both;
+}
+
+.pf-cp-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pf-fade-in var(--dur-cinematic) cubic-bezier(0.19, 1, 0.22, 1) both;
+  animation-delay: 0.3s;
+}
+
+.pf-cp-svg {
+  width: 100%;
+  max-width: 560px;
+  height: auto;
+}
+
+/* ── Vortex rings ── */
+.pf-cp-vortex {
+  animation: pf-vortex-spin var(--dur-cinematic) linear both;
+  animation-delay: 0.5s;
+  transform-origin: 280px 200px;
+}
+
+/* ── Model names ── */
+.pf-cp-models {
+  animation: pf-fade-in var(--dur-slow) linear both;
+  animation-delay: 0.8s;
+}
+
+/* ── Center question mark ── */
+.pf-cp-center {
+  animation: pf-pulse var(--dur-slow) ease-in-out infinite;
+  animation-delay: 1.2s;
+  transform-origin: 280px 200px;
+}
+
+/* ── Solution chips ── */
+.pf-cp-solution {
+  animation: pf-fade-up var(--dur-slow) linear both;
+  animation-delay: 1.5s;
+}
+
+.pf-cp-chip--1 {
+  animation: pf-chip-pop var(--dur-base) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 1.7s;
+}
+
+.pf-cp-chip--2 {
+  animation: pf-chip-pop var(--dur-base) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 1.9s;
+}
+
+.pf-cp-chip--3 {
+  animation: pf-chip-pop var(--dur-base) cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  animation-delay: 2.1s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 4: 判断公式 — decision formula
+ * Animation: question fades in, formula diagram draws left to right
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.pf-formula {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.pf-formula-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 48px;
+}
+
+/* ─── Question ─── */
+.pf-formula-question {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  animation: pf-fade-down var(--dur-base) linear both;
+  animation-delay: 0.1s;
+}
+
+.pf-formula-q-label {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--text-faint);
+}
+
+.pf-formula-q-text {
+  font-family: var(--font-display-cn);
+  font-size: 48px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.03em;
+}
+
+/* ─── Formula diagram ─── */
+.pf-formula-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pf-fade-in var(--dur-slow) linear both;
+  animation-delay: 0.4s;
+}
+
+.pf-formula-svg {
+  width: 100%;
+  max-width: 900px;
+  height: auto;
+}
+
+/* ── Input box ── */
+.pf-formula-input {
+  animation: pf-node-glow var(--dur-slow) linear both;
+  animation-delay: 0.6s;
+}
+
+/* ── Branch arrows ── */
+.pf-formula-branches {
+  animation: pf-draw var(--dur-slow) linear both;
+  animation-delay: 0.9s;
+}
+
+/* ── Yes/No results ── */
+.pf-formula-yes {
+  animation: pf-node-glow var(--dur-slow) linear both;
+  animation-delay: 1.2s;
+}
+
+.pf-formula-no {
+  animation: pf-node-dim var(--dur-slow) linear both;
+  animation-delay: 1.4s;
+}
+
+/* ── Final arrows ── */
+.pf-formula-final-arrow {
+  animation: pf-draw var(--dur-base) linear both;
+  animation-delay: 1.6s;
+}
+
+/* ── Final outcomes ── */
+.pf-formula-final-yes {
+  animation: pf-fade-in var(--dur-base) linear both;
+  animation-delay: 1.9s;
+}
+
+.pf-formula-final-no {
+  animation: pf-fade-in var(--dur-base) linear both;
+  animation-delay: 2.1s;
+}
+
+/* ─── Bottom rule ─── */
+.pf-formula-rule {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  animation: pf-fade-up var(--dur-base) linear both;
+  animation-delay: 2.3s;
+}
+
+.pf-formula-rule-line {
+  flex: 1;
+  height: 1px;
+  background: var(--accent);
+}
+
+.pf-formula-rule-text {
+  font-family: var(--font-display-cn);
+  font-size: 28px;
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Keyframes — punchy + linear (Swiss style)
+ * ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes pf-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pf-fade-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pf-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pf-slide-up {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pf-draw {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pf-node-glow {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pf-node-dim {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pf-pop-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pf-x-stamp {
+  0%   { opacity: 0; transform: scale(2) rotate(-15deg); }
+  60%  { opacity: 1; transform: scale(0.9) rotate(0deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes pf-bubble-fade {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pf-arrow-dash {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pf-bill-slide {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pf-bill-slide-accent {
+  from { opacity: 0; transform: translateY(30px) scale(1.05); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes pf-stamp-in {
+  0%   { opacity: 0; transform: scale(2) rotate(-8deg); }
+  50%  { opacity: 0.8; transform: scale(0.95) rotate(2deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+@keyframes pf-vortex-spin {
+  from { opacity: 0; transform: rotate(-30deg) scale(0.85); }
+  to   { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+@keyframes pf-chip-pop {
+  from { opacity: 0; transform: translateY(10px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Continuous loops ── */
+
+@keyframes pf-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.08); opacity: 0.8; }
+}

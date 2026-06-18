@@ -1,0 +1,383 @@
+/* ═══════════════════════════════════════════════════════════════════
+ * Hook.css — Chapter 01: Hook (开场钩子)
+ * 3 steps: Model Grid → Blast+Cross → Waste+Transition
+ * Prefix: .hk-
+ * Style: Swiss International, IKB blue, weight 200, 1px hairline grid
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Shared layout ─── */
+.hk-grid,
+.hk-blast,
+.hk-waste {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 96px 96px 80px;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 0 — Four Model Grid
+ * "你手机里有几个 AI？"
+ * ═══════════════════════════════════════════════════════════════════ */
+.hk-grid {
+  gap: 0;
+}
+
+/* Kicker */
+.hk-grid-kicker {
+  position: absolute;
+  top: 80px;
+  left: 96px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: hk-grid-kicker-in 0.5s ease-out both;
+}
+
+.hk-grid-kicker-line {
+  width: 40px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.hk-grid-kicker-text {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+}
+
+@keyframes hk-grid-kicker-in {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Title */
+.hk-grid-title {
+  font-size: 88px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  margin-bottom: 72px;
+  animation: hk-grid-title-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+}
+
+@keyframes hk-grid-title-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Four model cards */
+.hk-grid-cards {
+  display: flex;
+  gap: 32px;
+  margin-bottom: 64px;
+}
+
+.hk-grid-card {
+  width: 220px;
+  height: 280px;
+  border: 1px solid var(--rule);
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  position: relative;
+  animation: hk-grid-card-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  transition: border-color 0.3s ease;
+}
+
+.hk-grid-card:hover {
+  border-color: var(--accent);
+}
+
+@keyframes hk-grid-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card number — top-left corner */
+.hk-grid-card-num {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-faint);
+  letter-spacing: 0.15em;
+}
+
+/* Card model name — centered */
+.hk-grid-card-name {
+  font-size: 36px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+/* Footer with hairline + count */
+.hk-grid-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: hk-grid-footer-in 0.6s ease-out 1.2s both;
+}
+
+@keyframes hk-grid-footer-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hk-grid-footer-line {
+  width: 60px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.hk-grid-footer-count {
+  font-size: 48px;
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.hk-grid-footer-label {
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-mute);
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 1 — Blast + Cross
+ * "谁先回用谁？"
+ * ═══════════════════════════════════════════════════════════════════ */
+.hk-blast {
+  gap: 0;
+}
+
+/* Title */
+.hk-blast-title {
+  font-size: 80px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  margin-bottom: 24px;
+  animation: hk-blast-title-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes hk-blast-title-in {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* SVG scene */
+.hk-blast-scene {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  justify-content: center;
+}
+
+.hk-blast-svg {
+  width: 100%;
+  height: auto;
+  max-height: 500px;
+}
+
+/* Question group fade in */
+.hk-blast-question-grp {
+  animation: hk-blast-q-in 0.5s ease-out both;
+}
+
+@keyframes hk-blast-q-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Dashed lines drawing in */
+.hk-blast-line {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: hk-blast-line-draw 0.5s ease-out both;
+}
+
+@keyframes hk-blast-line-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Model tags appearing */
+.hk-blast-model-tag {
+  opacity: 0;
+  animation: hk-blast-tag-in 0.4s ease-out both;
+}
+
+@keyframes hk-blast-tag-in {
+  from { opacity: 0; transform: scale(0.7); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* Big X — two diagonal lines */
+.hk-blast-x1 {
+  stroke-dasharray: 1100;
+  stroke-dashoffset: 1100;
+  animation: hk-blast-x-draw 0.5s cubic-bezier(0.4, 0, 0.2, 1) 1.2s both;
+}
+
+.hk-blast-x2 {
+  stroke-dasharray: 1100;
+  stroke-dashoffset: 1100;
+  animation: hk-blast-x-draw 0.5s cubic-bezier(0.4, 0, 0.2, 1) 1.5s both;
+}
+
+@keyframes hk-blast-x-draw {
+  to { stroke-dashoffset: 0; }
+}
+
+/* Subtitle */
+.hk-blast-sub {
+  font-size: 26px;
+  font-weight: 300;
+  color: var(--text-mute);
+  letter-spacing: 0.04em;
+  margin-top: 16px;
+  animation: hk-blast-sub-in 0.5s ease-out 2s both;
+}
+
+@keyframes hk-blast-sub-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 2 — "最浪费的用法" + Transition
+ * ═══════════════════════════════════════════════════════════════════ */
+.hk-waste {
+  gap: 80px;
+}
+
+/* Hero text block */
+.hk-waste-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  animation: hk-waste-hero-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes hk-waste-hero-in {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+    filter: blur(10px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.hk-waste-hero-label {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.25em;
+}
+
+.hk-waste-hero-text {
+  font-size: 140px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+/* Transition block */
+.hk-waste-transition {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  width: 100%;
+  max-width: 1200px;
+  animation: hk-waste-transition-in 0.6s ease-out 0.8s both;
+}
+
+@keyframes hk-waste-transition-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hk-waste-hairline {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+/* Topic block */
+.hk-waste-topic {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.hk-waste-topic-kicker {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.25em;
+  animation: hk-waste-kicker-in 0.5s ease-out 1.2s both;
+}
+
+@keyframes hk-waste-kicker-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.hk-waste-topic-title {
+  font-size: 64px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  animation: hk-waste-title-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.4s both;
+}
+
+@keyframes hk-waste-title-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hk-waste-topic-sub {
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-mute);
+  letter-spacing: 0.04em;
+  animation: hk-waste-sub-in 0.5s ease-out 1.8s both;
+}
+
+@keyframes hk-waste-sub-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

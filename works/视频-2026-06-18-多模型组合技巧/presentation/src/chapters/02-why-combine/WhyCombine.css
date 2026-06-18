@@ -1,0 +1,483 @@
+/* ─── WhyCombine chapter — 4 steps ─── */
+
+.wc-cards,
+.wc-barrel,
+.wc-puzzle,
+.wc-quote {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Shared kicker styles
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.wc-cards-kicker,
+.wc-barrel-kicker,
+.wc-puzzle-kicker {
+  position: absolute;
+  top: 80px;
+  left: 96px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: wc-fade-down var(--dur-base) var(--ease-quart) both;
+}
+
+.wc-cards-kicker-line,
+.wc-barrel-kicker-line,
+.wc-puzzle-kicker-line {
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.wc-cards-kicker-text,
+.wc-barrel-kicker-text,
+.wc-puzzle-kicker-text {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 0 — Model Cards
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.wc-cards {
+  padding: 80px 96px;
+  display: flex;
+  flex-direction: column;
+}
+
+.wc-cards-title {
+  font-family: var(--font-display-cn);
+  font-size: 56px;
+  font-weight: 200;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  margin: 120px 0 0 0;
+  line-height: 1.1;
+  animation: wc-fade-up var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 0.15s;
+}
+
+.wc-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 64px;
+  flex: 1;
+  align-content: center;
+}
+
+/* ─── Model card ─── */
+.wc-model-card {
+  display: flex;
+  flex-direction: column;
+  padding: 28px 24px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  box-shadow: var(--card-shadow);
+  min-height: 380px;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: wc-card-rise var(--dur-slow) var(--ease-quart) both;
+  animation-delay: var(--wc-card-delay, 0s);
+}
+
+.wc-model-card-name {
+  font-family: var(--font-display-en);
+  font-size: 32px;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  line-height: 1;
+}
+
+.wc-model-card-rule {
+  height: 1px;
+  background: var(--rule);
+  margin: 16px 0;
+}
+
+/* ─── Strength / Weakness rows ─── */
+.wc-model-card-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.wc-model-card-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+}
+
+.wc-model-card-value {
+  font-family: var(--font-display-cn);
+  font-size: 20px;
+  font-weight: 300;
+  letter-spacing: 0.03em;
+  line-height: 1.3;
+}
+
+.wc-model-card-row--strength .wc-model-card-value {
+  color: var(--accent);
+}
+
+.wc-model-card-row--weakness .wc-model-card-value {
+  color: var(--text-mute);
+  text-decoration: line-through;
+  text-decoration-color: var(--text-faint);
+  text-decoration-thickness: 1px;
+}
+
+/* ─── Mini bar chart ─── */
+.wc-model-card-chart {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule);
+}
+
+.wc-cap-bars {
+  width: 100%;
+  height: auto;
+}
+
+.wc-cap-bar {
+  transform-origin: bottom;
+  transform: scaleY(0);
+  animation: wc-bar-grow var(--dur-slow) var(--ease-quart) both;
+}
+
+@keyframes wc-bar-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 1 — Barrel Effect
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.wc-barrel {
+  padding: 80px 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wc-barrel-kicker {
+  position: relative;
+  top: auto;
+  left: auto;
+  margin-bottom: 40px;
+  animation: wc-fade-down var(--dur-base) var(--ease-quart) both;
+}
+
+.wc-barrel-visual {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.wc-barrel-svg {
+  width: 700px;
+  max-width: 100%;
+  height: auto;
+  animation: wc-scale-in var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 0.2s;
+}
+
+/* ─── Stave entrance ─── */
+.wc-barrel-stave-group {
+  opacity: 0;
+  animation: wc-stave-drop var(--dur-slow) var(--ease-quart) both;
+}
+
+@keyframes wc-stave-drop {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Water fill animation ─── */
+.wc-barrel-water {
+  opacity: 0;
+  animation: wc-water-fill var(--dur-cinematic) var(--ease-soft) both;
+  animation-delay: 0.8s;
+}
+
+@keyframes wc-water-fill {
+  from { opacity: 0; transform: translateY(-20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Water line ─── */
+.wc-barrel-waterline {
+  opacity: 0;
+  animation: wc-fade-in var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 1.0s;
+}
+
+/* ─── Arrow ─── */
+.wc-barrel-arrow,
+.wc-barrel-arrow-head {
+  opacity: 0;
+  animation: wc-fade-in var(--dur-base) var(--ease-quart) both;
+  animation-delay: 1.3s;
+}
+
+/* ─── Caption ─── */
+.wc-barrel-caption {
+  font-family: var(--font-display-cn);
+  font-size: 28px;
+  font-weight: 200;
+  letter-spacing: 0.1em;
+  color: var(--text-mute);
+  margin: 24px 0 0 0;
+  animation: wc-fade-up var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 1.5s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 2 — Puzzle Combine
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.wc-puzzle {
+  padding: 80px 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wc-puzzle-kicker {
+  position: relative;
+  top: auto;
+  left: auto;
+  margin-bottom: 40px;
+  animation: wc-fade-down var(--dur-base) var(--ease-quart) both;
+}
+
+.wc-puzzle-visual {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.wc-puzzle-svg {
+  width: 760px;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ─── Puzzle pieces staggered entrance ─── */
+.wc-puzzle-piece {
+  opacity: 0;
+  transform: scale(0.85);
+  transform-origin: center;
+  animation: wc-piece-join var(--dur-slow) var(--ease-overshoot) both;
+}
+
+.wc-puzzle-piece--1 { animation-delay: 0.2s; }
+.wc-puzzle-piece--2 { animation-delay: 0.45s; }
+.wc-puzzle-piece--3 { animation-delay: 0.7s; }
+.wc-puzzle-piece--4 { animation-delay: 0.95s; }
+
+@keyframes wc-piece-join {
+  from {
+    opacity: 0;
+    transform: scale(0.85) translate(0, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translate(0, 0);
+  }
+}
+
+/* ─── Center circle ─── */
+.wc-puzzle-center {
+  opacity: 0;
+  transform-origin: center;
+  animation: wc-center-pop var(--dur-base) var(--ease-overshoot) both;
+  animation-delay: 1.3s;
+}
+
+@keyframes wc-center-pop {
+  0%   { opacity: 0; transform: scale(0); }
+  60%  { opacity: 1; transform: scale(1.15); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* ─── Caption ─── */
+.wc-puzzle-caption {
+  font-family: var(--font-display-cn);
+  font-size: 28px;
+  font-weight: 200;
+  letter-spacing: 0.1em;
+  color: var(--text-mute);
+  margin: 24px 0 0 0;
+  animation: wc-fade-up var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 1.6s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 3 — Golden Quote
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.wc-quote {
+  padding: 80px 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+/* ─── Accent lines ─── */
+.wc-quote-line {
+  width: 120px;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: center;
+  animation: wc-line-expand var(--dur-slow) var(--ease-expo) both;
+}
+
+.wc-quote-line--top {
+  animation-delay: 0.1s;
+}
+
+.wc-quote-line--bottom {
+  animation-delay: 1.2s;
+}
+
+@keyframes wc-line-expand {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ─── Quote mark ─── */
+.wc-quote-mark {
+  animation: wc-fade-in var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 0.3s;
+}
+
+.wc-quote-mark svg {
+  width: 60px;
+  height: 48px;
+}
+
+/* ─── Quote text ─── */
+.wc-quote-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.wc-quote-line-text {
+  font-family: var(--font-display-cn);
+  font-size: 84px;
+  font-weight: 200;
+  letter-spacing: 0.08em;
+  line-height: 1.15;
+  color: var(--text);
+  margin: 0;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: wc-text-reveal var(--dur-cinematic) var(--ease-expo) both;
+}
+
+.wc-quote-line-text--1 {
+  animation-delay: 0.5s;
+}
+
+.wc-quote-line-text--2 {
+  animation-delay: 0.75s;
+}
+
+.wc-quote-line-text--3 {
+  animation-delay: 1.0s;
+  color: var(--text-faint);
+}
+
+.wc-quote-highlight {
+  color: var(--accent);
+  font-weight: 300;
+}
+
+@keyframes wc-text-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* ─── English translation ─── */
+.wc-quote-en {
+  font-family: var(--font-display-en);
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+  margin: 16px 0 0 0;
+  font-style: italic;
+  opacity: 0;
+  animation: wc-fade-in var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 1.3s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Shared keyframes
+ * ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes wc-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes wc-fade-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wc-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wc-scale-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes wc-card-rise {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

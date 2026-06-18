@@ -1,132 +1,807 @@
-/* ─── Hook chapter ─── */
+/* ═══════════════════════════════════════════════════════════════════
+ * Hook.css — Chapter 01: Hook (开场钩子)
+ * 6 steps: Rain → Calm → LLM Intro → Weakness 1/2/3
+ * Prefix: .hk-
+ * ═══════════════════════════════════════════════════════════════════ */
 
-/* ─── Stage ─── */
-.hk-stage {
-  width: 100%;
-  height: 100%;
-  position: relative;
+/* ─── Shared ─── */
+.hk-rain,
+.hk-calm,
+.hk-llm,
+.hk-w1,
+.hk-w2,
+.hk-w3 {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px;
   overflow: hidden;
 }
 
-/* ─── Step 0: Rain words ─── */
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 0 — Abbreviation Rain
+ * ═══════════════════════════════════════════════════════════════════ */
 .hk-rain {
+  background: var(--surface);
+}
+
+.hk-rain-vignette {
   position: absolute;
   inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 40%,
+    rgba(10, 10, 10, 0.12) 100%
+  );
+  pointer-events: none;
+  z-index: 2;
 }
 
 .hk-rain-word {
   position: absolute;
-  top: -40px;
-  font-family: var(--font-mono);
-  font-weight: 600;
-  color: var(--accent);
-  opacity: 0;
-  animation: hk-drop linear infinite;
+  top: -60px;
+  color: var(--text);
   white-space: nowrap;
+  letter-spacing: 0.02em;
+  animation-name: hk-rain-fall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  z-index: 1;
 }
 
-@keyframes hk-drop {
-  0%   { transform: translateY(-40px); opacity: 0; }
-  10%  { opacity: 0.7; }
-  90%  { opacity: 0.7; }
-  100% { transform: translateY(1120px); opacity: 0; }
+@keyframes hk-rain-fall {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: var(--word-opacity, 0.7);
+  }
+  90% {
+    opacity: var(--word-opacity, 0.7);
+  }
+  100% {
+    transform: translateY(1100px) rotate(-3deg);
+    opacity: 0;
+  }
 }
 
-/* ─── Step 1: "别慌" ─── */
-.hk-calm {
+.hk-rain-overlay {
   position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  bottom: 80px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 3;
+  animation: hk-rain-overlay-in 1.5s ease-out 2s both;
 }
 
-.hk-calm--enter {
-  animation: hk-fade-in 0.6s ease-out both;
+.hk-rain-question {
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--text-mute);
+  letter-spacing: 0.08em;
 }
 
-.hk-calm--visible {
-  opacity: 1;
+@keyframes hk-rain-overlay-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 1 — "别慌" Calm Down
+ * ═══════════════════════════════════════════════════════════════════ */
+.hk-calm {
+  background: var(--surface);
+  gap: 32px;
+}
+
+.hk-calm-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--accent-glow) 0%,
+    transparent 70%
+  );
+  animation: hk-calm-glow-pulse 3s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes hk-calm-glow-pulse {
+  from { opacity: 0.3; transform: scale(0.8); }
+  to   { opacity: 0.6; transform: scale(1.1); }
 }
 
 .hk-calm-title {
   font-family: var(--font-display-cn);
+  font-size: 180px;
   font-weight: 200;
-  font-size: 240px;
+  color: var(--text);
   letter-spacing: 0.12em;
-  color: var(--accent);
-  margin: 0;
-  text-shadow: 0 0 60px var(--accent-glow), 0 0 120px var(--accent-glow);
+  line-height: 1;
+  animation: hk-calm-scale-in 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+  z-index: 1;
 }
 
-/* ─── Step 2: LLM reveal ─── */
+@keyframes hk-calm-scale-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+    filter: blur(20px);
+  }
+  60% {
+    opacity: 1;
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.hk-calm-sub {
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--text-mute);
+  letter-spacing: 0.05em;
+  animation: hk-calm-sub-in 0.8s ease-out 0.6s both;
+  z-index: 1;
+}
+
+@keyframes hk-calm-sub-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 2 — LLM Intro
+ * ═══════════════════════════════════════════════════════════════════ */
 .hk-llm {
+  background: var(--surface);
+  gap: 0;
+}
+
+.hk-llm-kicker {
   position: absolute;
-  inset: 0;
+  top: 80px;
+  left: 80px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: hk-llm-kicker-in 0.5s ease-out both;
+}
+
+.hk-llm-kicker-line {
+  width: 40px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.hk-llm-kicker-text {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+}
+
+@keyframes hk-llm-kicker-in {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.hk-llm-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  animation: hk-llm-center-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes hk-llm-center-in {
+  from { opacity: 0; transform: translateY(30px) scale(0.9); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.hk-llm-brain {
+  width: 200px;
+  height: 200px;
+  animation: hk-llm-brain-float 4s ease-in-out infinite alternate;
+}
+
+@keyframes hk-llm-brain-float {
+  from { transform: translateY(0); }
+  to   { transform: translateY(-8px); }
+}
+
+.hk-llm-badge {
+  border: 1px solid var(--accent);
+  padding: 6px 20px;
+  background: var(--accent-soft);
+}
+
+.hk-llm-badge-text {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.hk-llm-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.hk-llm-tag {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: center;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-2);
+  white-space: nowrap;
+  padding: 4px 12px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  animation: hk-llm-tag-in 0.5s ease-out both;
+  margin-left: -50px;
+  margin-top: -14px;
+}
+
+@keyframes hk-llm-tag-in {
+  from { opacity: 0; transform: scale(0.5); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.hk-llm-analogy {
+  position: absolute;
+  bottom: 80px;
+  left: 80px;
+  right: 80px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-mute);
+  letter-spacing: 0.04em;
+  animation: hk-llm-analogy-in 0.6s ease-out 0.8s both;
+}
+
+@keyframes hk-llm-analogy-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 3 — Weakness 1: Knowledge Cutoff
+ * ═══════════════════════════════════════════════════════════════════ */
+.hk-w1 {
+  background: var(--surface);
+  justify-content: space-between;
+}
+
+.hk-w1-number {
+  position: absolute;
+  top: 80px;
+  left: 80px;
+  font-size: 120px;
+  font-weight: 200;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  animation: hk-w1-number-in 0.6s ease-out both;
+}
+
+@keyframes hk-w1-number-in {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.hk-w1-body {
+  display: flex;
+  align-items: center;
+  gap: 80px;
+  animation: hk-w1-body-in 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+}
+
+@keyframes hk-w1-body-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hk-w1-calendar {
+  width: 220px;
+  height: 220px;
+  flex-shrink: 0;
+}
+
+.hk-w1-strike {
+  animation: hk-w1-strike-in 0.5s ease-out 0.6s both;
+  transform-origin: center;
+}
+
+@keyframes hk-w1-strike-in {
+  from { opacity: 0; strokeDashoffset: 200; strokeDasharray: 200; }
+  to   { opacity: 1; strokeDashoffset: 0; }
+}
+
+.hk-w1-crack1,
+.hk-w1-crack2,
+.hk-w1-crack3 {
+  animation: hk-w1-crack-in 0.4s ease-out both;
+}
+.hk-w1-crack1 { animation-delay: 0.8s; }
+.hk-w1-crack2 { animation-delay: 0.9s; }
+.hk-w1-crack3 { animation-delay: 1.0s; }
+
+@keyframes hk-w1-crack-in {
+  from { opacity: 0; }
+  to   { opacity: var(--crack-opacity, 0.5); }
+}
+
+.hk-w1-text {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hk-w1-title {
+  font-size: 88px;
+  font-weight: 200;
+  color: var(--text);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+}
+
+.hk-w1-desc {
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--text-mute);
+  letter-spacing: 0.03em;
+}
+
+.hk-w1-weakness-label {
+  position: absolute;
+  bottom: 80px;
+  right: 80px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-faint);
+  letter-spacing: 0.2em;
+  animation: hk-w1-label-in 0.4s ease-out 1s both;
+}
+
+@keyframes hk-w1-label-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 4 — Weakness 2: Hallucination
+ * ═══════════════════════════════════════════════════════════════════ */
+.hk-w2 {
+  background: var(--surface);
+  justify-content: center;
+  gap: 40px;
+}
+
+.hk-w2-number {
+  position: absolute;
+  top: 80px;
+  left: 80px;
+  font-size: 120px;
+  font-weight: 200;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  animation: hk-w2-number-in 0.6s ease-out both;
+}
+
+@keyframes hk-w2-number-in {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.hk-w2-chat {
+  width: 720px;
+  max-width: 80%;
+  border: 1px solid var(--rule);
+  background: var(--surface-2);
+  animation: hk-w2-chat-slide 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes hk-w2-chat-slide {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.hk-w2-chat-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--surface);
+}
+
+.hk-w2-chat-dots {
+  display: flex;
+  gap: 6px;
+}
+
+.hk-w2-chat-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-faint);
+}
+
+.hk-w2-chat-title {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-mute);
+  letter-spacing: 0.15em;
+}
+
+.hk-w2-msg {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hk-w2-msg:last-child {
+  border-bottom: none;
+}
+
+.hk-w2-role {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-mute);
+  letter-spacing: 0.15em;
+}
+
+.hk-w2-role--ai {
+  color: var(--accent);
+}
+
+.hk-w2-text {
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text-2);
+  line-height: 1.6;
+}
+
+.hk-w2-text--ai {
+  color: var(--text);
+}
+
+.hk-w2-highlight {
+  color: var(--accent);
+  font-weight: 400;
+}
+
+.hk-w2-msg--wrong {
+  position: relative;
+  background: rgba(204, 0, 0, 0.03);
+}
+
+.hk-w2-warning {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  animation: hk-w2-warning-shake 0.4s ease-out 0.3s both;
+}
+
+@keyframes hk-w2-warning-shake {
+  0%   { opacity: 0; transform: translateX(-10px); }
+  30%  { opacity: 1; transform: translateX(4px); }
+  60%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+.hk-w2-warning-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.hk-w2-warning-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: #cc0000;
+  letter-spacing: 0.1em;
+}
+
+.hk-w2-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  animation: hk-w2-title-in 0.5s ease-out 0.4s both;
+}
+
+@keyframes hk-w2-title-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hk-w2-title {
+  font-size: 88px;
+  font-weight: 200;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.hk-w2-desc {
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--text-mute);
+}
+
+.hk-w2-weakness-label {
+  position: absolute;
+  bottom: 80px;
+  right: 80px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-faint);
+  letter-spacing: 0.2em;
+  animation: hk-w2-label-in 0.4s ease-out 0.6s both;
+}
+
+@keyframes hk-w2-label-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 5 — Weakness 3: Can't Operate External Systems
+ * ═══════════════════════════════════════════════════════════════════ */
+.hk-w3 {
+  background: var(--surface);
+  justify-content: center;
+  gap: 40px;
+}
+
+.hk-w3-number {
+  position: absolute;
+  top: 80px;
+  left: 80px;
+  font-size: 120px;
+  font-weight: 200;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  animation: hk-w3-number-in 0.6s ease-out both;
+}
+
+@keyframes hk-w3-number-in {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.hk-w3-scene {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  width: 100%;
+  max-width: 1100px;
+  animation: hk-w3-scene-in 0.7s ease-out 0.2s both;
+}
+
+@keyframes hk-w3-scene-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.hk-w3-llm-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+}
+
+.hk-w3-brain {
+  width: 120px;
+  height: 120px;
+  opacity: 0.8;
+}
+
+.hk-w3-llm-label {
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+}
+
+.hk-w3-wall {
+  position: relative;
+  width: 120px;
+  height: 360px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  animation: hk-fade-in 0.8s ease-out both;
+  gap: 16px;
 }
 
-.hk-llm-icon {
-  width: 140px;
-  height: 140px;
-  margin-bottom: 40px;
-}
-
-.hk-cracks {
+.hk-w3-wall-bricks {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  width: 520px;
+  animation: hk-w3-wall-rise 0.5s ease-out 0.4s both;
 }
 
-.hk-crack {
+@keyframes hk-w3-wall-rise {
+  from { opacity: 0; transform: scaleY(0); transform-origin: bottom; }
+  to   { opacity: 1; transform: scaleY(1); }
+}
+
+.hk-w3-brick-row {
+  flex: 1;
+  border-top: 1px solid var(--text);
+  border-left: 1px solid var(--text);
+  border-right: 1px solid var(--text);
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 28px,
+    var(--text) 28px,
+    var(--text) 29px
+  );
+}
+
+.hk-w3-brick-row--offset {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0,
+    transparent 14px,
+    var(--text) 14px,
+    var(--text) 15px
+  );
+}
+
+.hk-w3-brick-row:first-child {
+  border-top: 1px solid var(--text);
+}
+
+.hk-w3-brick-row:last-child {
+  border-bottom: 1px solid var(--text);
+}
+
+.hk-w3-wall-label {
+  position: relative;
+  z-index: 1;
+  background: var(--surface);
+  padding: 4px 10px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: 0.15em;
+  border: 1px solid var(--text);
+}
+
+.hk-w3-external {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  flex: 1;
+  align-items: center;
+}
+
+.hk-w3-ext-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.5;
+  animation: hk-w3-ext-fade 0.5s ease-out 0.6s both;
+}
+
+@keyframes hk-w3-ext-fade {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 0.5; transform: translateX(0); }
+}
+
+.hk-w3-ext-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.hk-w3-ext-label {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-mute);
+  letter-spacing: 0.15em;
+}
+
+.hk-w3-titles {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  animation: hk-w3-titles-in 0.5s ease-out 0.5s both;
+}
+
+@keyframes hk-w3-titles-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hk-w3-title {
+  font-size: 72px;
+  font-weight: 200;
+  color: var(--text);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.hk-w3-desc {
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-mute);
+}
+
+.hk-w3-transition {
+  position: absolute;
+  bottom: 80px;
+  left: 80px;
+  right: 80px;
   display: flex;
   align-items: center;
   gap: 20px;
-  opacity: 0;
-  animation: hk-crack-in 0.5s ease-out both;
+  animation: hk-w3-transition-in 0.6s ease-out 1s both;
 }
 
-.hk-crack-line {
-  width: 3px;
-  height: 48px;
+@keyframes hk-w3-transition-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hk-w3-transition-line {
+  flex: 1;
+  height: 1px;
   background: var(--accent);
-  border-radius: 2px;
-  flex-shrink: 0;
 }
 
-.hk-crack-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.hk-w3-transition-text {
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
 }
 
-.hk-crack-label {
-  font-family: var(--font-display-cn);
-  font-size: 28px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.2;
-}
-
-.hk-crack-desc {
-  font-family: var(--font-body);
-  font-size: 18px;
+.hk-w3-weakness-label {
+  position: absolute;
+  top: 80px;
+  right: 80px;
+  font-size: 13px;
   font-weight: 400;
-  color: var(--text-mute);
-  line-height: 1.3;
+  color: var(--text-faint);
+  letter-spacing: 0.2em;
+  animation: hk-w3-label-in 0.4s ease-out 0.3s both;
 }
 
-@keyframes hk-fade-in {
-  from { opacity: 0; transform: scale(0.96); }
-  to   { opacity: 1; transform: scale(1); }
-}
-
-@keyframes hk-crack-in {
-  from { opacity: 0; transform: translateX(-12px); }
-  to   { opacity: 1; transform: translateX(0); }
+@keyframes hk-w3-label-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
 }

@@ -1,0 +1,660 @@
+/* ═══════════════════════════════════════════════════════════════════
+ *  RealCase — Chapter 04
+ *  Theme: swiss-ikb (Klein Blue, 200 weight, hairline grid)
+ *  CSS prefix: .rc-
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Stage ─── */
+.rc-stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Shared typography ─── */
+.rc-kicker {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.rc-title {
+  font-family: var(--font-display-cn);
+  font-size: 80px;
+  font-weight: 200;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  margin: 8px 0 0;
+  line-height: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 0 — 流水线总览
+ *  Animation: nodes appear left-to-right, connecting lines draw
+ * ═══════════════════════════════════════════════════════════════════ */
+.rc-overview {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  animation: rc-fade-in 0.6s ease-out both;
+}
+
+.rc-overview-header {
+  margin-bottom: 60px;
+  animation: rc-fade-in 0.5s ease-out both;
+}
+
+.rc-pipeline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.rc-pipe-node-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.rc-pipe-arrow {
+  width: 30px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.rc-pipe-arrow-line {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 24;
+  animation: rc-draw-line 0.3s ease-out both;
+}
+
+.rc-pipe-arrow-head {
+  opacity: 0;
+  animation: rc-fade-in 0.2s ease-out both;
+  animation-delay: inherit;
+}
+
+.rc-pipe-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 14px;
+  width: 130px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: rc-node-up 0.5s ease-out both;
+}
+
+@keyframes rc-node-up {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rc-pipe-node-num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+}
+
+.rc-pipe-node-model {
+  font-family: var(--font-display-en);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--accent);
+  text-align: center;
+  line-height: 1.2;
+}
+
+.rc-pipe-node-task {
+  font-family: var(--font-display-cn);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text);
+  text-align: center;
+}
+
+.rc-pipe-node-en {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 400;
+  color: var(--text-mute);
+  letter-spacing: 0.05em;
+}
+
+.rc-overview-footer {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-top: 40px;
+  opacity: 0;
+  animation: rc-fade-in 0.5s ease-out both;
+  animation-delay: inherit;
+}
+
+.rc-overview-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.rc-overview-stat-num {
+  font-family: var(--font-display-en);
+  font-size: 48px;
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.rc-overview-stat-label {
+  font-family: var(--font-display-cn);
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text-mute);
+}
+
+.rc-overview-divider {
+  width: 1px;
+  height: 32px;
+  background: var(--rule);
+}
+
+.rc-overview-tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border: 1px solid var(--rule);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 1 — 放大前两步：Claude选题+大纲 / Claude口播稿
+ *  Animation: two cards slide in, prompt tag appears
+ * ═══════════════════════════════════════════════════════════════════ */
+.rc-zoom-first {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  animation: rc-fade-in 0.6s ease-out both;
+}
+
+.rc-zoom-header {
+  margin-bottom: 48px;
+  animation: rc-fade-in 0.5s ease-out both;
+}
+
+.rc-zoom-first-body {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 0;
+  flex: 1;
+}
+
+.rc-zoom-card {
+  display: flex;
+  flex-direction: column;
+  width: 340px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  opacity: 0;
+  transform: translateY(30px);
+  animation: rc-card-up 0.6s ease-out both;
+  animation-delay: inherit;
+}
+
+@keyframes rc-card-up {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.rc-zoom-card--2 {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.rc-zoom-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.rc-zoom-card--2 .rc-zoom-card-head {
+  border-bottom-color: var(--accent);
+}
+
+.rc-zoom-card-num {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+}
+
+.rc-zoom-card-model {
+  font-family: var(--font-display-en);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.rc-zoom-card-body {
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+}
+
+.rc-zoom-card-task {
+  font-family: var(--font-display-cn);
+  font-size: 36px;
+  font-weight: 200;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: 0.04em;
+}
+
+.rc-zoom-card-reason {
+  font-family: var(--font-display-cn);
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--text-mute);
+  padding: 6px 12px;
+  border: 1px solid var(--rule);
+  width: fit-content;
+}
+
+.rc-zoom-card-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.rc-zoom-card-detail-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.rc-zoom-card-detail-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  width: 48px;
+}
+
+.rc-zoom-card-detail-val {
+  font-family: var(--font-display-cn);
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text);
+}
+
+.rc-zoom-card-prompt {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 18px;
+  border: 1px solid var(--accent);
+  margin-top: 8px;
+  opacity: 0;
+  animation: rc-fade-in 0.4s ease-out both;
+  animation-delay: inherit;
+}
+
+.rc-zoom-card-prompt-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+}
+
+.rc-zoom-card-prompt-text {
+  font-family: var(--font-display-cn);
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+
+.rc-zoom-connector {
+  width: 60px;
+  height: 20px;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+.rc-zoom-connector-line {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: rc-draw-line 0.4s ease-out 0.6s both;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 2 — 放大中间三步：GPT-4o校对 / MJ配图 / 代码分工
+ *  Animation: three cards appear sequentially, code split bars grow
+ * ═══════════════════════════════════════════════════════════════════ */
+.rc-zoom-mid {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  animation: rc-fade-in 0.6s ease-out both;
+}
+
+.rc-zoom-mid-body {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: 24px;
+  flex: 1;
+}
+
+.rc-mid-card {
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  padding: 24px 20px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  opacity: 0;
+  transform: translateY(30px);
+  animation: rc-card-up 0.5s ease-out both;
+  animation-delay: inherit;
+}
+
+.rc-mid-card--review {
+  border-color: var(--accent);
+}
+
+.rc-mid-card-head {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.rc-mid-card-num {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-faint);
+  letter-spacing: 0.1em;
+}
+
+.rc-mid-card-model {
+  font-family: var(--font-display-en);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--accent);
+  margin-bottom: 6px;
+}
+
+.rc-mid-card-task {
+  font-family: var(--font-display-cn);
+  font-size: 28px;
+  font-weight: 200;
+  color: var(--text);
+  margin-bottom: 8px;
+  letter-spacing: 0.04em;
+}
+
+.rc-mid-card-reason {
+  font-family: var(--font-display-cn);
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-mute);
+  margin-bottom: 20px;
+}
+
+.rc-mid-card-visual {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rc-mid-check-svg {
+  width: 120px;
+  height: 60px;
+}
+
+.rc-mid-check-path {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: rc-draw-line 0.5s ease-out 0.8s both;
+}
+
+.rc-mid-image-svg {
+  width: 120px;
+  height: 60px;
+}
+
+/* ─── Code split section ─── */
+.rc-mid-code-split {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: auto;
+}
+
+.rc-mid-code-half {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 0;
+  opacity: 0;
+  animation: rc-fade-in 0.4s ease-out both;
+  animation-delay: inherit;
+}
+
+.rc-mid-code-label {
+  font-family: var(--font-display-en);
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.rc-mid-code-label--accent {
+  color: var(--accent);
+}
+
+.rc-mid-code-tag {
+  font-family: var(--font-display-cn);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-mute);
+}
+
+.rc-mid-code-bar {
+  height: 3px;
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: rc-bar-grow 0.6s ease-out 0.3s both;
+}
+
+.rc-mid-code-bar--logic {
+  background: var(--text-mute);
+  width: 60%;
+}
+
+.rc-mid-code-bar--ui {
+  background: var(--accent);
+  width: 40%;
+  animation-delay: 0.5s;
+}
+
+@keyframes rc-bar-grow {
+  to { transform: scaleX(1); }
+}
+
+.rc-mid-code-divider {
+  height: 1px;
+  background: var(--rule);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 3 — 放大最后一步：DeepSeek终审 + 总结
+ *  Animation: review node appears, arrows draw, summary scales in
+ * ═══════════════════════════════════════════════════════════════════ */
+.rc-zoom-final {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  animation: rc-fade-in 0.6s ease-out both;
+}
+
+.rc-final-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 48px;
+}
+
+.rc-final-review {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  opacity: 0;
+  animation: rc-fade-in 0.5s ease-out both;
+  animation-delay: inherit;
+}
+
+.rc-final-review-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 36px;
+  border: 2px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.rc-final-review-model {
+  font-family: var(--font-display-en);
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: -0.01em;
+}
+
+.rc-final-review-tag {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.rc-final-review-arrows {
+  width: 200px;
+  height: 100px;
+}
+
+.rc-final-arrow {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: rc-draw-line 0.4s ease-out both;
+  animation-delay: inherit;
+}
+
+.rc-final-review-output {
+  display: flex;
+  align-items: center;
+  padding: 16px 24px;
+  border: 1px solid var(--rule);
+  opacity: 0;
+  animation: rc-fade-in 0.4s ease-out both;
+  animation-delay: inherit;
+}
+
+.rc-final-review-output-text {
+  font-family: var(--font-display-cn);
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+
+/* ─── Summary ─── */
+.rc-final-summary {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  opacity: 0;
+  animation: rc-fade-in 0.6s ease-out both;
+  animation-delay: inherit;
+}
+
+.rc-final-summary-line {
+  width: 60px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.rc-final-summary-text {
+  font-family: var(--font-display-cn);
+  font-size: 56px;
+  font-weight: 200;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+
+.rc-final-efficiency {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  animation: rc-fade-in 0.5s ease-out both;
+  animation-delay: inherit;
+}
+
+.rc-final-efficiency-text {
+  font-family: var(--font-display-cn);
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  padding: 8px 20px;
+  border: 1px solid var(--accent);
+}
+
+/* ─── Keyframes ─── */
+@keyframes rc-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes rc-draw-line {
+  to { stroke-dashoffset: 0; }
+}

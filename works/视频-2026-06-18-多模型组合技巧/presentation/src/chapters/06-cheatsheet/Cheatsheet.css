@@ -1,0 +1,543 @@
+/* ═══════════════════════════════════════════════════════════════════
+ * Cheatsheet chapter — 3 steps
+ *   step 0: 8-row cheatsheet table, rows reveal one by one
+ *   step 1: "2026.06 状态" timestamp + core golden quote
+ *   step 2: Closing — next episode preview + CTA
+ *
+ * Style: Swiss International — IKB blue, extra-light weight, hairline grid
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Stage ─── */
+.cs-stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Scene root ─── */
+.cs-scene {
+  position: absolute;
+  inset: 0;
+  padding: 72px 96px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ─── Kicker ─── */
+.cs-kicker {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: cs-fade-down var(--dur-base) var(--ease-quart) both;
+  z-index: 2;
+}
+
+.cs-kicker-line {
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.cs-kicker-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+/* ─── Title ─── */
+.cs-title {
+  font-family: var(--font-display-cn);
+  font-size: 40px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.08em;
+  margin: 16px 0 28px;
+  animation: cs-fade-down var(--dur-base) var(--ease-quart) both;
+  animation-delay: 0.1s;
+  z-index: 2;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 0: Cheatsheet Table
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.cs-table {
+  width: 100%;
+  max-width: 1640px;
+  display: flex;
+  flex-direction: column;
+  z-index: 2;
+}
+
+/* ─── Header row ─── */
+.cs-table-header {
+  display: grid;
+  grid-template-columns: 200px 200px 200px 1fr;
+  gap: 0;
+  padding: 0 0 14px 0;
+  animation: cs-fade-down var(--dur-base) var(--ease-quart) both;
+  animation-delay: 0.2s;
+}
+
+.cs-col {
+  display: flex;
+  align-items: center;
+}
+
+.cs-table-header .cs-col {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--text-mute);
+  text-transform: uppercase;
+}
+
+.cs-col-task {
+  padding-left: 8px;
+}
+
+.cs-col-primary {
+  justify-content: center;
+}
+
+.cs-col-secondary {
+  justify-content: center;
+}
+
+.cs-col-reason {
+  padding-left: 24px;
+}
+
+/* ─── Header rule ─── */
+.cs-table-rule {
+  height: 1px;
+  background: var(--text);
+  opacity: 0.6;
+  margin-bottom: 0;
+  animation: cs-rule-grow var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 0.3s;
+  transform-origin: left;
+}
+
+.cs-table-rule--bottom {
+  margin-top: 0;
+  background: var(--rule);
+  opacity: 1;
+  animation: cs-fade-in var(--dur-base) both;
+  animation-delay: 1.8s;
+}
+
+@keyframes cs-rule-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ─── Data rows ─── */
+.cs-row {
+  display: grid;
+  grid-template-columns: 200px 200px 200px 1fr;
+  gap: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--rule);
+  align-items: center;
+  opacity: 0;
+  animation: cs-row-reveal var(--dur-base) var(--ease-quart) both;
+}
+
+.cs-row:last-of-type {
+  border-bottom: none;
+}
+
+@keyframes cs-row-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ─── Task column ─── */
+.cs-col-task-text {
+  font-family: var(--font-display-cn);
+  font-size: 22px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+
+/* ─── Model chips ─── */
+.cs-model-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 16px;
+  font-family: var(--font-display-en);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+.cs-model-chip--muted {
+  color: var(--text-mute);
+  background: var(--surface-2);
+  border-color: var(--rule);
+  font-weight: 300;
+}
+
+/* ─── Reason column ─── */
+.cs-col-reason-text {
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-weight: 300;
+  color: var(--text-mute);
+  letter-spacing: 0.01em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 1: Quote scene
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.cs-scene--quote {
+  justify-content: center;
+  gap: 0;
+}
+
+/* ─── Timestamp ─── */
+.cs-timestamp {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: cs-fade-down var(--dur-base) var(--ease-quart) both;
+  z-index: 2;
+}
+
+.cs-timestamp-bracket {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 200;
+  color: var(--text-faint);
+}
+
+.cs-timestamp-text {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+}
+
+.cs-timestamp-note {
+  font-family: var(--font-display-cn);
+  font-size: 18px;
+  font-weight: 200;
+  color: var(--text-mute);
+  margin-left: 20px;
+  padding-left: 20px;
+  border-left: 1px solid var(--rule);
+}
+
+/* ─── Divider ─── */
+.cs-quote-divider {
+  width: 1px;
+  height: 48px;
+  background: var(--accent);
+  margin: 32px 0;
+  animation: cs-divider-grow var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 0.2s;
+  transform-origin: top;
+}
+
+@keyframes cs-divider-grow {
+  from { transform: scaleY(0); }
+  to   { transform: scaleY(1); }
+}
+
+/* ─── Quote ─── */
+.cs-quote {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  z-index: 2;
+  animation: cs-fade-up var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 0.4s;
+}
+
+.cs-quote-mark {
+  font-family: var(--font-display-en);
+  font-size: 80px;
+  font-weight: 200;
+  color: var(--accent);
+  line-height: 0.8;
+  opacity: 0.4;
+}
+
+.cs-quote-mark--end {
+  align-self: flex-end;
+  line-height: 0.8;
+}
+
+.cs-quote-text {
+  font-family: var(--font-display-cn);
+  font-size: 88px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  margin: 0;
+}
+
+.cs-quote-accent {
+  color: var(--accent);
+}
+
+/* ─── Efficiency bars ─── */
+.cs-bars {
+  display: flex;
+  gap: 64px;
+  margin-top: 48px;
+  z-index: 2;
+  animation: cs-fade-up var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 0.8s;
+}
+
+.cs-bar-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cs-bar-label {
+  font-family: var(--font-display-cn);
+  font-size: 18px;
+  font-weight: 200;
+  color: var(--text-mute);
+  width: 80px;
+  text-align: right;
+}
+
+.cs-bar {
+  width: 200px;
+  height: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  overflow: hidden;
+}
+
+.cs-bar-fill {
+  height: 100%;
+  width: 50%;
+  background: var(--text-faint);
+  opacity: 0.4;
+  animation: cs-bar-grow var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 1.2s;
+  transform-origin: left;
+}
+
+.cs-bar-fill--accent {
+  width: 100%;
+  background: var(--accent);
+  opacity: 1;
+  animation-delay: 1.6s;
+}
+
+@keyframes cs-bar-grow {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+.cs-bar-value {
+  font-family: var(--font-display-en);
+  font-size: 28px;
+  font-weight: 200;
+  color: var(--text-mute);
+}
+
+.cs-bar-value--accent {
+  color: var(--accent);
+  font-weight: 300;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Step 2: Closing scene
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.cs-scene--closing {
+  justify-content: center;
+  gap: 32px;
+}
+
+/* ─── Next episode card ─── */
+.cs-next-card {
+  width: 100%;
+  max-width: 1080px;
+  padding: 40px 56px;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  z-index: 2;
+  animation: cs-card-enter var(--dur-slow) var(--ease-quart) both;
+}
+
+@keyframes cs-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.cs-next-card-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.cs-next-ep-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+.cs-next-ep-line {
+  flex: 1;
+  height: 1px;
+  background: var(--accent);
+  opacity: 0.3;
+}
+
+.cs-next-ep-title {
+  font-family: var(--font-display-cn);
+  font-size: 56px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.06em;
+  margin: 0;
+  line-height: 1.1;
+}
+
+.cs-next-ep-subtitle {
+  font-family: var(--font-body);
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-mute);
+  margin: 0;
+  letter-spacing: 0.02em;
+}
+
+/* ─── Flow SVG ─── */
+.cs-next-flow {
+  margin-top: 8px;
+  z-index: 2;
+}
+
+.cs-next-flow-svg {
+  width: 100%;
+  max-width: 800px;
+  height: auto;
+}
+
+.cs-flow-node--1 {
+  animation: cs-fade-in var(--dur-base) both;
+  animation-delay: 0.6s;
+}
+.cs-flow-node--2 {
+  animation: cs-fade-in var(--dur-base) both;
+  animation-delay: 0.8s;
+}
+.cs-flow-node--3 {
+  animation: cs-fade-in var(--dur-base) both;
+  animation-delay: 1.0s;
+}
+
+/* ─── CTA ─── */
+.cs-cta {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  max-width: 1080px;
+  z-index: 2;
+  animation: cs-fade-up var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 1.2s;
+}
+
+.cs-cta-line {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+}
+
+.cs-cta-body {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-shrink: 0;
+}
+
+.cs-cta-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  padding: 4px 10px;
+  border: 1px solid var(--accent);
+}
+
+.cs-cta-text {
+  font-family: var(--font-display-cn);
+  font-size: 24px;
+  font-weight: 200;
+  color: var(--text-mute);
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Keyframes — shared
+ * ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes cs-fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cs-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes cs-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

@@ -1,0 +1,932 @@
+/* ═══════════════════════════════════════════════════════════════════
+ *  LoraFcFinetune — Chapter 04
+ *  Theme: swiss-ikb (Klein Blue, 200 weight, hairline grid)
+ *  CSS prefix: .lf-
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Stage ─── */
+.lf-stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Shared typography ─── */
+.lf-kicker {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+
+.lf-title {
+  font-family: var(--font-display-cn);
+  font-size: 80px;
+  font-weight: 200;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  margin: 8px 0 0;
+  line-height: 1;
+}
+
+.lf-hero-cn {
+  font-family: var(--font-display-en);
+  font-size: 96px;
+  font-weight: 200;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin: 8px 0 0;
+  line-height: 1;
+}
+
+.lf-hero-sub {
+  font-family: var(--font-display-cn);
+  font-size: 24px;
+  font-weight: 300;
+  color: var(--text-mute);
+  margin: 16px 0 0;
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 0 — LoRA 引入 + 训练成本
+ *  Animation: left text slides in from left, bars grow upward
+ * ═══════════════════════════════════════════════════════════════════ */
+.lf-cost {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  align-items: center;
+  gap: 80px;
+  animation: lf-fade-in 0.6s ease-out both;
+}
+
+.lf-cost-left {
+  flex: 0 0 40%;
+  display: flex;
+  flex-direction: column;
+  animation: lf-slide-right 0.7s ease-out both;
+}
+
+@keyframes lf-slide-right {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.lf-cost-tag {
+  margin-top: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border: 1px solid var(--accent);
+  width: fit-content;
+  animation: lf-fade-in 0.5s ease-out 0.8s both;
+}
+
+.lf-cost-tag-text {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.lf-cost-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  animation: lf-fade-in 0.6s ease-out 0.3s both;
+}
+
+.lf-cost-big-number {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.lf-cost-dollar {
+  font-family: var(--font-display-en);
+  font-size: 120px;
+  font-weight: 200;
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  line-height: 1;
+  animation: lf-scale-in 0.8s ease-out 0.5s both;
+}
+
+@keyframes lf-scale-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+.lf-cost-big-label {
+  font-family: var(--font-display-cn);
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--text-mute);
+  margin-top: 12px;
+  letter-spacing: 0.05em;
+}
+
+.lf-cost-chart {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.lf-cost-chart-title {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lf-cost-bars {
+  width: 100%;
+  height: 240px;
+}
+
+.lf-cost-bar-group {
+  opacity: 0;
+  animation: lf-fade-in 0.5s ease-out both;
+}
+
+.lf-cost-bar {
+  transform-origin: bottom;
+  transform: scaleY(0);
+  animation: lf-bar-grow 0.7s ease-out both;
+  animation-delay: inherit;
+}
+
+@keyframes lf-bar-grow {
+  to { transform: scaleY(1); }
+}
+
+.lf-cost-bar-value {
+  font-family: var(--font-display-en);
+  font-size: 13px;
+  font-weight: 400;
+  opacity: 0;
+  animation: lf-fade-in 0.4s ease-out 0.3s both;
+  animation-delay: inherit;
+}
+
+.lf-cost-bar-label {
+  font-family: var(--font-display-en);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 1 — LoRA 解决方案
+ *  Animation: model block scales in, adapter slides from right
+ * ═══════════════════════════════════════════════════════════════════ */
+.lf-solution {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  animation: lf-fade-in 0.6s ease-out both;
+}
+
+.lf-solution-header {
+  margin-bottom: 48px;
+  animation: lf-fade-in 0.5s ease-out both;
+}
+
+.lf-solution-body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  flex: 1;
+}
+
+.lf-sol-model {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.lf-sol-model svg {
+  width: 280px;
+  height: 200px;
+}
+
+.lf-sol-model-rect {
+  transform-origin: center;
+  animation: lf-scale-in 0.6s ease-out 0.2s both;
+}
+
+.lf-sol-model-label {
+  font-family: var(--font-display-cn);
+  font-size: 18px;
+  font-weight: 300;
+}
+
+.lf-sol-model-sub {
+  font-family: var(--font-display-en);
+  font-size: 12px;
+  font-weight: 300;
+}
+
+.lf-sol-connector {
+  width: 80px;
+  height: 20px;
+}
+
+.lf-sol-connector-line {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: lf-draw-line 0.5s ease-out 0.6s both;
+}
+
+@keyframes lf-draw-line {
+  to { stroke-dashoffset: 0; }
+}
+
+.lf-sol-adapter {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  animation: lf-slide-left 0.6s ease-out 0.8s both;
+}
+
+@keyframes lf-slide-left {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.lf-sol-adapter svg {
+  width: 160px;
+  height: 120px;
+}
+
+.lf-sol-adapter-label {
+  font-family: var(--font-display-en);
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.lf-sol-adapter-sub {
+  font-family: var(--font-display-cn);
+  font-size: 12px;
+  font-weight: 300;
+}
+
+.lf-sol-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border: 1px solid var(--rule);
+}
+
+.lf-sol-label--accent {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+.lf-solution-footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 40px;
+  animation: lf-fade-in 0.5s ease-out 1.2s both;
+}
+
+.lf-sol-compare {
+  display: flex;
+  gap: 32px;
+  flex: 1;
+}
+
+.lf-sol-compare-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 24px;
+  border: 1px solid var(--rule);
+  position: relative;
+  overflow: hidden;
+}
+
+.lf-sol-compare-item--full {
+  flex: 0 0 280px;
+}
+
+.lf-sol-compare-item--lora {
+  flex: 0 0 200px;
+  border-color: var(--accent);
+}
+
+.lf-sol-compare-title {
+  font-family: var(--font-display-en);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.lf-sol-compare-title--accent {
+  color: var(--accent);
+}
+
+.lf-sol-compare-desc {
+  font-family: var(--font-display-cn);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-mute);
+}
+
+.lf-sol-compare-bar {
+  height: 3px;
+  margin-top: 8px;
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: lf-bar-grow-h 0.8s ease-out 1.5s both;
+}
+
+.lf-sol-compare-bar--full {
+  background: var(--text-mute);
+  width: 100%;
+}
+
+.lf-sol-compare-bar--lora {
+  background: var(--accent);
+  width: 35%;
+}
+
+@keyframes lf-bar-grow-h {
+  to { transform: scaleX(1); }
+}
+
+.lf-sol-gpu-tag {
+  padding: 8px 16px;
+  background: var(--accent);
+}
+
+.lf-sol-gpu-text {
+  font-family: var(--font-display-cn);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--surface);
+  letter-spacing: 0.05em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 2 — Function Calling 引入
+ *  Animation: left text fades in, right SVG contrast wipe left→right
+ * ═══════════════════════════════════════════════════════════════════ */
+.lf-fc-intro {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  align-items: center;
+  gap: 80px;
+  animation: lf-fade-in 0.6s ease-out both;
+}
+
+.lf-fc-intro-left {
+  flex: 0 0 42%;
+  display: flex;
+  flex-direction: column;
+  animation: lf-slide-right 0.7s ease-out both;
+}
+
+.lf-fc-intro-desc {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text-mute);
+  margin-top: 24px;
+  line-height: 1.6;
+  max-width: 400px;
+}
+
+.lf-fc-intro-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: lf-fade-in 0.6s ease-out 0.4s both;
+}
+
+.lf-fc-vs {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.lf-fc-vs-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 28px;
+  flex: 1;
+}
+
+.lf-fc-vs-side--talk {
+  opacity: 0.6;
+}
+
+.lf-fc-vs-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lf-fc-vs-label--accent {
+  color: var(--accent);
+}
+
+.lf-fc-vs-icon {
+  width: 140px;
+  height: 140px;
+}
+
+.lf-fc-vs-icon--act {
+  width: 160px;
+}
+
+.lf-fc-act-line {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: lf-draw-line 0.4s ease-out both;
+}
+
+.lf-fc-act-tool {
+  opacity: 0;
+  animation: lf-fade-in 0.4s ease-out both;
+  animation-delay: inherit;
+}
+
+.lf-fc-vs-text {
+  font-family: var(--font-display-cn);
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-mute);
+}
+
+.lf-fc-vs-text--accent {
+  color: var(--accent);
+}
+
+.lf-fc-vs-sub {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-mute);
+  letter-spacing: 0.05em;
+}
+
+.lf-fc-vs-divider {
+  width: 1px;
+  background: var(--rule);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 3 — FC 流程动画
+ *  Animation: pipeline nodes light up sequentially, arrows draw between them
+ * ═══════════════════════════════════════════════════════════════════ */
+.lf-fc-flow {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: lf-fade-in 0.6s ease-out both;
+}
+
+.lf-fc-flow-header {
+  margin-bottom: 60px;
+  animation: lf-fade-in 0.5s ease-out both;
+}
+
+.lf-fc-flow-pipeline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.lf-fc-flow-node-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.lf-fc-flow-arrow {
+  width: 40px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.lf-fc-flow-arrow-line {
+  stroke-dasharray: 34;
+  stroke-dashoffset: 34;
+  animation: lf-draw-line 0.3s ease-out both;
+}
+
+.lf-fc-flow-arrow-head {
+  opacity: 0;
+  animation: lf-fade-in 0.2s ease-out both;
+  animation-delay: inherit;
+}
+
+.lf-fc-flow-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 16px;
+  width: 130px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: lf-node-up 0.5s ease-out both;
+}
+
+.lf-fc-flow-node--user {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.lf-fc-flow-node--output {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+@keyframes lf-node-up {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.lf-fc-flow-node-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lf-fc-flow-node-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.lf-fc-flow-node-label {
+  font-family: var(--font-display-cn);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.lf-fc-flow-node-en {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  color: var(--text-mute);
+  letter-spacing: 0.05em;
+}
+
+.lf-fc-flow-footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 60px;
+  animation: lf-fade-in 0.5s ease-out 2.2s both;
+}
+
+.lf-fc-flow-hands {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 24px;
+  border: 1px solid var(--accent);
+}
+
+.lf-fc-flow-hands-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.lf-fc-flow-hands-text {
+  font-family: var(--font-display-cn);
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 4 — Fine-tuning 引入
+ *  Animation: data blocks flow in, model glows/pulses
+ * ═══════════════════════════════════════════════════════════════════ */
+.lf-ft {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  align-items: center;
+  gap: 60px;
+  animation: lf-fade-in 0.6s ease-out both;
+}
+
+.lf-ft-left {
+  flex: 0 0 38%;
+  display: flex;
+  flex-direction: column;
+  animation: lf-slide-right 0.7s ease-out both;
+}
+
+.lf-ft-tags {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.lf-ft-tag {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  animation: lf-fade-in 0.4s ease-out both;
+  animation-delay: inherit;
+}
+
+.lf-ft-tag-dot {
+  width: 10px;
+  height: 10px;
+  background: var(--text-mute);
+  flex-shrink: 0;
+}
+
+.lf-ft-tag-dot--accent {
+  background: var(--accent);
+}
+
+.lf-ft-tag-text {
+  font-family: var(--font-display-cn);
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+
+.lf-ft-right {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: lf-fade-in 0.6s ease-out 0.3s both;
+}
+
+.lf-ft-svg {
+  width: 100%;
+  max-width: 500px;
+  height: auto;
+}
+
+.lf-ft-data-block {
+  opacity: 0;
+  animation: lf-data-flow 0.6s ease-out both;
+  animation-delay: inherit;
+}
+
+@keyframes lf-data-flow {
+  from { opacity: 0; transform: translateX(-20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.lf-ft-arrow {
+  opacity: 0;
+  animation: lf-fade-in 0.4s ease-out both;
+  animation-delay: inherit;
+}
+
+.lf-ft-model-rect {
+  transform-origin: center;
+  animation: lf-model-pulse 2.5s ease-in-out 1s infinite;
+}
+
+@keyframes lf-model-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.lf-ft-model-glow1 {
+  animation: lf-glow1 2.5s ease-in-out 1s infinite;
+}
+
+.lf-ft-model-glow2 {
+  animation: lf-glow2 2.5s ease-in-out 1s infinite;
+}
+
+@keyframes lf-glow1 {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.3; }
+}
+
+@keyframes lf-glow2 {
+  0%, 100% { opacity: 0.08; }
+  50% { opacity: 0.2; }
+}
+
+.lf-ft-model-label {
+  font-family: var(--font-display-cn);
+  font-size: 20px;
+  font-weight: 300;
+}
+
+.lf-ft-model-sub {
+  font-family: var(--font-display-en);
+  font-size: 12px;
+  font-weight: 300;
+}
+
+.lf-ft-model-layer {
+  stroke-dasharray: 240;
+  stroke-dashoffset: 240;
+  animation: lf-draw-line 0.5s ease-out both;
+  animation-delay: inherit;
+}
+
+.lf-ft-retrain-label {
+  opacity: 0;
+  animation: lf-fade-in 0.5s ease-out 1.5s both;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 5 — 三种方案对比表
+ *  Animation: columns reveal one by one, rows fade in sequentially
+ * ═══════════════════════════════════════════════════════════════════ */
+.lf-compare {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  animation: lf-fade-in 0.6s ease-out both;
+}
+
+.lf-compare-header {
+  margin-bottom: 48px;
+  animation: lf-fade-in 0.5s ease-out both;
+}
+
+.lf-compare-table {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.lf-compare-row {
+  display: grid;
+  grid-template-columns: 160px 1fr 1fr 1fr;
+  border-bottom: 1px solid var(--rule);
+  opacity: 0;
+  animation: lf-row-in 0.5s ease-out both;
+  animation-delay: inherit;
+}
+
+.lf-compare-row--header {
+  border-bottom: 1px solid var(--text);
+  padding-bottom: 16px;
+  margin-bottom: 0;
+}
+
+@keyframes lf-row-in {
+  to { opacity: 1; }
+}
+
+.lf-compare-cell {
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lf-compare-cell--label {
+  justify-content: center;
+}
+
+.lf-compare-row-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lf-compare-col-title {
+  font-family: var(--font-display-en);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text);
+}
+
+.lf-compare-col-title--accent {
+  color: var(--accent);
+}
+
+.lf-compare-col-sub {
+  font-family: var(--font-display-cn);
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-mute);
+}
+
+.lf-compare-cell-text {
+  font-family: var(--font-display-cn);
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--text);
+}
+
+.lf-compare-cell--lora {
+  background: var(--accent-soft);
+}
+
+.lf-compare-footer {
+  margin-top: 40px;
+  opacity: 0;
+  animation: lf-fade-in 0.5s ease-out both;
+  animation-delay: inherit;
+}
+
+.lf-compare-decision {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px 32px;
+  border: 1px solid var(--rule);
+}
+
+.lf-compare-decision-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.lf-compare-decision-list {
+  display: flex;
+  gap: 48px;
+  flex-wrap: wrap;
+}
+
+.lf-compare-decision-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.lf-compare-decision-key {
+  font-family: var(--font-display-cn);
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text-mute);
+}
+
+.lf-compare-decision-arrow {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  color: var(--text-faint);
+}
+
+.lf-compare-decision-val {
+  font-family: var(--font-display-en);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--accent);
+}
+
+/* ─── Keyframes ─── */
+@keyframes lf-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}

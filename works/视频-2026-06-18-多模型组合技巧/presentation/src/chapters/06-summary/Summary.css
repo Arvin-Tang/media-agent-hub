@@ -1,0 +1,475 @@
+/* ═══════════════════════════════════════════════════════════════════
+ * Summary chapter — 3 steps
+ *   step 0: Kitchen metaphor group 1 (LLM, Prompt, RAG)
+ *   step 1: Kitchen metaphor group 2 (Agent, MCP, LoRA, Function Calling)
+ *   step 2: Kitchen metaphor group 3 (Fine-tuning, RLHF, Multimodal) + closing
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Stage ─── */
+.sm-stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Scene root ─── */
+.sm-scene {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ─── Kicker ─── */
+.sm-kicker {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  animation: sm-fade-down var(--dur-base) var(--ease-quart) both;
+  z-index: 2;
+}
+
+.sm-kicker-line {
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.sm-kicker-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+}
+
+/* ─── Title ─── */
+.sm-title {
+  font-family: var(--font-display-cn);
+  font-size: 40px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.08em;
+  margin: 20px 0 32px;
+  animation: sm-fade-down var(--dur-base) var(--ease-quart) both;
+  animation-delay: 0.1s;
+  z-index: 2;
+}
+
+.sm-title--finale {
+  font-size: 44px;
+  animation-delay: 0s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Infographic (SVG container)
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.sm-infographic {
+  width: 100%;
+  max-width: 1720px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.sm-infographic--compact {
+  flex: 0 0 auto;
+  max-height: 360px;
+  margin-bottom: 20px;
+}
+
+.sm-infographic-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 500px;
+}
+
+/* ─── Infographic item stagger (step 0) ─── */
+.sm-info-item {
+  opacity: 0;
+  animation: sm-info-fade-in var(--dur-slow) var(--ease-quart) both;
+}
+.sm-info-item--1 { animation-delay: 0.3s; }
+.sm-info-item--2 { animation-delay: 0.6s; }
+.sm-info-item--3 { animation-delay: 0.9s; }
+
+/* ─── Infographic item slide-in (step 1) ─── */
+.sm-info-item--slide-1 {
+  opacity: 0;
+  animation: sm-info-slide-right var(--dur-slow) var(--ease-expo) both;
+  animation-delay: 0.2s;
+}
+.sm-info-item--slide-2 {
+  opacity: 0;
+  animation: sm-info-slide-right var(--dur-slow) var(--ease-expo) both;
+  animation-delay: 0.45s;
+}
+.sm-info-item--slide-3 {
+  opacity: 0;
+  animation: sm-info-slide-right var(--dur-slow) var(--ease-expo) both;
+  animation-delay: 0.7s;
+}
+.sm-info-item--slide-4 {
+  opacity: 0;
+  animation: sm-info-slide-right var(--dur-slow) var(--ease-expo) both;
+  animation-delay: 0.95s;
+}
+
+@keyframes sm-info-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sm-info-slide-right {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Cards row (step 0 — horizontal row of 3 cards)
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.sm-cards-row {
+  display: flex;
+  gap: 24px;
+  width: 100%;
+  max-width: 1400px;
+  margin-top: 20px;
+  z-index: 2;
+}
+
+.sm-cards-row .sm-card {
+  flex: 1;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Cards grid (step 1 & 2 — 5×2 grid)
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.sm-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  gap: 14px;
+  width: 100%;
+  max-width: 1720px;
+  flex: 1;
+  z-index: 2;
+}
+
+.sm-cards-grid--all {
+  flex: 0 1 auto;
+  max-height: 320px;
+  margin-bottom: 24px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Card
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.sm-card {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  padding: 18px 20px;
+  min-height: 100px;
+}
+
+/* ─── Dimmed (already shown in previous step) ─── */
+.sm-card--dimmed {
+  opacity: 0.35;
+  background: var(--surface);
+  border-color: var(--rule);
+}
+
+.sm-card--dimmed .sm-card-cn {
+  color: var(--text-mute);
+}
+
+.sm-card--dimmed .sm-card-en {
+  color: var(--text-faint);
+}
+
+.sm-card--dimmed .sm-card-role {
+  color: var(--text-faint);
+}
+
+/* ─── Placeholder (not yet revealed) ─── */
+.sm-card--placeholder {
+  background: var(--surface);
+  border: 1px dashed var(--rule);
+  opacity: 0.3;
+}
+
+.sm-card-cn--empty {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-faint);
+}
+
+.sm-card-icon--empty {
+  width: 28px;
+  height: 28px;
+  border: 1px dashed var(--rule);
+}
+
+/* ─── Card internals ─── */
+.sm-card-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+}
+
+.sm-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-left: 12px;
+  flex-shrink: 0;
+}
+
+.sm-card-cn {
+  font-family: var(--font-display-cn);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.sm-card-en {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  line-height: 1.2;
+}
+
+.sm-card-line {
+  flex: 1;
+  height: 1px;
+  background: var(--rule);
+  margin: 0 14px;
+  min-width: 12px;
+  position: relative;
+}
+
+.sm-card-line::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: -2px;
+  width: 5px;
+  height: 5px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.sm-card-role {
+  flex-shrink: 0;
+  max-width: 200px;
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--text-mute);
+  line-height: 1.3;
+  text-align: right;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Animation classes for cards
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Stagger fade-in (step 0) ─── */
+.sm-anim-stagger {
+  opacity: 0;
+  animation: sm-card-stagger var(--dur-slow) var(--ease-quart) both;
+}
+
+@keyframes sm-card-stagger {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ─── Slide-in from left (step 1) ─── */
+.sm-anim-slide-in {
+  opacity: 0;
+  animation: sm-card-slide var(--dur-slow) var(--ease-expo) both;
+}
+
+@keyframes sm-card-slide {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ─── Scale-in with slight overshoot (step 2) ─── */
+.sm-anim-scale-in {
+  opacity: 0;
+  animation: sm-card-scale var(--dur-slow) var(--ease-overshoot) both;
+}
+
+@keyframes sm-card-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Finale: "2026 年 AI 全貌"
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.sm-finale {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  margin-top: 20px;
+  opacity: 0;
+  animation: sm-finale-in var(--dur-cinematic) var(--ease-expo) both;
+  animation-delay: 1.4s;
+  z-index: 2;
+}
+
+.sm-finale-line {
+  width: 100px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.sm-finale-line--l {
+  animation: sm-line-grow-l var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 1.6s;
+}
+
+.sm-finale-line--r {
+  animation: sm-line-grow-r var(--dur-slow) var(--ease-quart) both;
+  animation-delay: 1.6s;
+}
+
+@keyframes sm-line-grow-l {
+  from { transform: scaleX(0); transform-origin: right; }
+  to   { transform: scaleX(1); transform-origin: right; }
+}
+
+@keyframes sm-line-grow-r {
+  from { transform: scaleX(0); transform-origin: left; }
+  to   { transform: scaleX(1); transform-origin: left; }
+}
+
+.sm-finale-text {
+  font-family: var(--font-display-cn);
+  font-size: 56px;
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: 0.14em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Bottom: next episode
+ * ═══════════════════════════════════════════════════════════════════ */
+
+.sm-next {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 20px;
+  opacity: 0;
+  animation: sm-fade-up var(--dur-base) var(--ease-quart) both;
+  animation-delay: 2.2s;
+  z-index: 2;
+}
+
+.sm-next-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+  padding: 4px 10px;
+  border: 1px solid var(--accent);
+}
+
+.sm-next-text {
+  font-family: var(--font-body);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--text-mute);
+  letter-spacing: 0.02em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ * Keyframes — shared
+ * ═══════════════════════════════════════════════════════════════════ */
+
+@keyframes sm-fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sm-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sm-finale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

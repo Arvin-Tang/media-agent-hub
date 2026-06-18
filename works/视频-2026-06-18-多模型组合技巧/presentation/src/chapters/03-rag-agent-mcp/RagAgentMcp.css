@@ -1,0 +1,1074 @@
+/* ═══════════════════════════════════════════════════════════════════
+ *  RagAgentMcp — Chapter 03 (8 steps)
+ *  Theme: swiss-ikb (Klein Blue, weight 200, hairline grid, flat rects)
+ *  CSS prefix: .ra-
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Stage ─── */
+.ra-stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Shared: kicker ─── */
+.ra-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: ra-fade-down var(--dur-base) linear both;
+}
+
+.ra-kicker-line {
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.ra-kicker-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+}
+
+.ra-kicker-sep {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.ra-kicker-en {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--text-mute);
+}
+
+/* ─── Shared: hero text ─── */
+.ra-hero-cn {
+  font-family: var(--font-display-cn);
+  font-size: 96px;
+  font-weight: 200;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  margin: 0;
+  line-height: 1;
+}
+
+.ra-hero-en {
+  font-family: var(--font-display-en);
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-mute);
+  margin: 16px 0 0;
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 0 — RAG intro
+ *  Animation: clip-path reveal on left, scale-in on right
+ * ═══════════════════════════════════════════════════════════════════ */
+.ra-rag-intro {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  animation: ra-fade-in var(--dur-base) linear both;
+}
+
+.ra-rag-intro-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 80px;
+}
+
+.ra-rag-intro-left {
+  flex: 1;
+  animation: ra-clip-reveal var(--dur-cinematic) linear both;
+}
+
+@keyframes ra-clip-reveal {
+  from { clip-path: inset(0 100% 0 0); opacity: 0; }
+  to   { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+
+.ra-rag-intro-right {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  animation: ra-scale-in var(--dur-slow) linear both;
+  animation-delay: 0.4s;
+}
+
+.ra-brain-svg {
+  width: 240px;
+  height: 240px;
+}
+
+.ra-forgot-tag {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 24px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  animation: ra-tag-drop var(--dur-slow) linear both;
+  animation-delay: 1.2s;
+}
+
+@keyframes ra-tag-drop {
+  from { opacity: 0; transform: translateY(-16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ra-forgot-tag-text {
+  font-family: var(--font-display-cn);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.ra-forgot-tag-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  opacity: 0.7;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 1 — RAG solution (simple flow)
+ *  Animation: nodes slide-up + fade, arrows draw left-to-right
+ * ═══════════════════════════════════════════════════════════════════ */
+.ra-rag-solution {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  animation: ra-fade-in var(--dur-base) linear both;
+}
+
+.ra-rag-solution-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 48px;
+}
+
+.ra-rag-solution-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.ra-flow-node-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.ra-flow-arrow {
+  width: 60px;
+  height: 8px;
+  flex-shrink: 0;
+}
+
+.ra-flow-arrow svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ra-flow-arrow-line {
+  stroke-dasharray: 52;
+  stroke-dashoffset: 52;
+  animation: ra-draw-line 0.35s linear both;
+}
+
+.ra-flow-arrow-head {
+  opacity: 0;
+  animation: ra-fade-in 0.2s linear both;
+}
+
+@keyframes ra-draw-line {
+  to { stroke-dashoffset: 0; }
+}
+
+.ra-flow-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 28px 24px;
+  width: 160px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: ra-node-up 0.45s linear both;
+}
+
+@keyframes ra-node-up {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ra-flow-node-icon {
+  width: 48px;
+  height: 48px;
+}
+
+.ra-flow-node-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ra-flow-node-label {
+  font-family: var(--font-display-cn);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.2;
+}
+
+.ra-flow-node-en {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-mute);
+  letter-spacing: 0.05em;
+}
+
+.ra-rag-solution-caption {
+  font-family: var(--font-display-cn);
+  font-size: 28px;
+  font-weight: 200;
+  color: var(--text-mute);
+  margin: 0;
+  letter-spacing: 0.08em;
+  animation: ra-fade-up var(--dur-base) linear both;
+  animation-delay: 1.6s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 2 — RAG pipeline (detailed)
+ *  Animation: horizontal cascade, icons draw in
+ * ═══════════════════════════════════════════════════════════════════ */
+.ra-rag-pipeline {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: ra-fade-in var(--dur-base) linear both;
+}
+
+.ra-rag-pipeline-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+}
+
+.ra-pipeline-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: nowrap;
+}
+
+.ra-pipeline-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 14px;
+  min-width: 110px;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  opacity: 0;
+  transform: translateY(16px);
+  animation: ra-node-up 0.4s linear both;
+}
+
+.ra-pipeline-node--start {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.ra-pipeline-node--end {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.ra-pipeline-node--db,
+.ra-pipeline-node--embed,
+.ra-pipeline-node--chunk,
+.ra-pipeline-node--bundle {
+  background: var(--surface);
+}
+
+.ra-pipeline-icon {
+  width: 40px;
+  height: 40px;
+}
+
+.ra-pipeline-node-label {
+  font-family: var(--font-display-cn);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.ra-pipeline-node-label--accent {
+  color: var(--accent);
+}
+
+.ra-pipeline-arrow {
+  width: 36px;
+  height: 8px;
+  flex-shrink: 0;
+}
+
+.ra-pipeline-arrow svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ra-pipeline-arrow-line {
+  stroke-dasharray: 32;
+  stroke-dashoffset: 32;
+  animation: ra-draw-line 0.3s linear both;
+}
+
+.ra-pipeline-arrow-head {
+  opacity: 0;
+  animation: ra-fade-in 0.15s linear both;
+}
+
+/* Components */
+.ra-pipeline-components {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.ra-pipeline-comp-header {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-mute);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.ra-pipeline-comp-grid {
+  display: flex;
+  gap: 24px;
+}
+
+.ra-pipeline-comp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 28px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: ra-node-up 0.35s linear both;
+}
+
+.ra-pipeline-comp-name {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.ra-pipeline-comp-en {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--accent);
+  opacity: 0.6;
+  letter-spacing: 0.05em;
+}
+
+.ra-pipeline-comp-desc {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--text-mute);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 3 — Agent intro (comparison)
+ *  Animation: left fades, right slides from right
+ * ═══════════════════════════════════════════════════════════════════ */
+.ra-agent-intro {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  animation: ra-fade-in var(--dur-base) linear both;
+}
+
+.ra-agent-intro-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.ra-agent-intro-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  padding: 20px;
+}
+
+.ra-agent-intro-side--plain {
+  animation: ra-slide-left var(--dur-slow) linear both;
+  animation-delay: 0.2s;
+}
+
+.ra-agent-intro-side--agent {
+  animation: ra-slide-right var(--dur-slow) linear both;
+  animation-delay: 0.5s;
+}
+
+@keyframes ra-slide-left {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes ra-slide-right {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.ra-agent-intro-label {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--text-mute);
+  text-transform: uppercase;
+}
+
+.ra-agent-intro-label--accent {
+  color: var(--accent);
+}
+
+.ra-agent-intro-diagram {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.ra-person-svg,
+.ra-ai-svg {
+  width: 80px;
+  height: 80px;
+}
+
+.ra-agent-intro-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.ra-agent-intro-arrow svg {
+  width: 80px;
+  height: 24px;
+}
+
+.ra-agent-intro-arrow-text {
+  font-family: var(--font-display-cn);
+  font-size: 14px;
+  color: var(--text-mute);
+  letter-spacing: 0.05em;
+}
+
+.ra-agent-intro-arrow-text--accent {
+  color: var(--accent);
+}
+
+.ra-agent-intro-divider {
+  width: 1px;
+  height: 60%;
+  background: var(--rule);
+}
+
+.ra-agent-intro-tag {
+  font-family: var(--font-display-cn);
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-mute);
+  margin: 0;
+  letter-spacing: 0.04em;
+  animation: ra-fade-up var(--dur-base) linear both;
+  animation-delay: 1s;
+}
+
+.ra-agent-intro-tag--accent {
+  color: var(--accent);
+  font-weight: 400;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 4 — Agent four abilities (2×2 grid)
+ *  Animation: each cell scale-in with stagger
+ * ═══════════════════════════════════════════════════════════════════ */
+.ra-agent-abilities {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: ra-fade-in var(--dur-base) linear both;
+}
+
+.ra-agent-abilities-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.ra-ability-card {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 32px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  opacity: 0;
+  transform: scale(0.92);
+  animation: ra-card-scale 0.5s linear both;
+}
+
+@keyframes ra-card-scale {
+  to { opacity: 1; transform: scale(1); }
+}
+
+.ra-ability-icon {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+}
+
+.ra-ability-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ra-ability-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ra-ability-name {
+  font-family: var(--font-display-cn);
+  font-size: 32px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+
+.ra-ability-en {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.ra-ability-desc {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--text-mute);
+  margin-top: 4px;
+}
+
+/* ReAct label */
+.ra-react-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 16px 0;
+  border-top: 1px solid var(--rule);
+  opacity: 0;
+  animation: ra-fade-up var(--dur-base) linear both;
+}
+
+.ra-react-name {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+.ra-react-cycle {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 300;
+  color: var(--text-mute);
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 5 — Agent vs AI scenario
+ *  Animation: left chat fades, right pipeline reveals top-to-bottom
+ * ═══════════════════════════════════════════════════════════════════ */
+.ra-agent-scenario {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: ra-fade-in var(--dur-base) linear both;
+}
+
+.ra-agent-scenario-body {
+  flex: 1;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+/* Left: plain AI */
+.ra-scenario-plain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 20px;
+  animation: ra-slide-left var(--dur-slow) linear both;
+  animation-delay: 0.2s;
+}
+
+.ra-scenario-label {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--text-mute);
+  text-transform: uppercase;
+}
+
+.ra-scenario-label--accent {
+  color: var(--accent);
+}
+
+.ra-scenario-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 28px;
+  background: var(--surface-2);
+  border: 1px solid var(--rule);
+  width: 100%;
+  max-width: 420px;
+}
+
+.ra-chat-msg {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.ra-chat-role {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--text-faint);
+}
+
+.ra-chat-msg--ai .ra-chat-role {
+  color: var(--accent);
+}
+
+.ra-chat-text {
+  font-family: var(--font-body);
+  font-size: 20px;
+  line-height: 1.5;
+  color: var(--text);
+  margin: 0;
+}
+
+.ra-chat-text--weak {
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+/* Divider */
+.ra-scenario-divider {
+  width: 1px;
+  background: var(--rule);
+  margin: 20px 0;
+}
+
+/* Right: agent */
+.ra-scenario-agent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 20px;
+  animation: ra-slide-right var(--dur-slow) linear both;
+  animation-delay: 0.3s;
+}
+
+.ra-scenario-pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+  max-width: 360px;
+}
+
+.ra-scenario-step-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ra-scenario-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  width: 100%;
+  opacity: 0;
+  transform: translateX(-16px);
+  animation: ra-step-slide 0.4s linear both;
+}
+
+@keyframes ra-step-slide {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.ra-scenario-step-num {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.ra-scenario-step-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ra-scenario-step-label {
+  font-family: var(--font-display-cn);
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.ra-scenario-step-en {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-mute);
+  letter-spacing: 0.05em;
+}
+
+.ra-scenario-step-connector {
+  width: 1px;
+  height: 16px;
+  background: var(--accent);
+  opacity: 0;
+  animation: ra-connector-grow 0.2s linear both;
+}
+
+@keyframes ra-connector-grow {
+  to { opacity: 1; }
+}
+
+.ra-scenario-multi-agent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  border: 1px solid var(--rule);
+  opacity: 0;
+  animation: ra-fade-up var(--dur-base) linear both;
+}
+
+.ra-scenario-multi-label {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.ra-scenario-multi-desc {
+  font-family: var(--font-display-cn);
+  font-size: 14px;
+  color: var(--text-mute);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 6 — MCP intro (chaos)
+ *  Animation: tangled lines draw with stroke-dashoffset, X marks pop
+ * ═══════════════════════════════════════════════════════════════════ */
+.ra-mcp-intro {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: ra-fade-in var(--dur-base) linear both;
+}
+
+.ra-mcp-intro-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+.ra-mcp-intro-title {
+  text-align: center;
+  animation: ra-fade-down var(--dur-base) linear both;
+  animation-delay: 0.2s;
+}
+
+.ra-mcp-intro-title .ra-hero-cn {
+  font-size: 80px;
+}
+
+.ra-mcp-chaos {
+  width: 100%;
+  max-width: 720px;
+  animation: ra-scale-in var(--dur-slow) linear both;
+  animation-delay: 0.4s;
+}
+
+.ra-chaos-svg {
+  width: 100%;
+  height: auto;
+}
+
+.ra-chaos-line {
+  stroke-dasharray: 500;
+  stroke-dashoffset: 500;
+  animation: ra-draw-chaos 0.8s linear both;
+}
+
+@keyframes ra-draw-chaos {
+  to { stroke-dashoffset: 0; }
+}
+
+.ra-chaos-x {
+  opacity: 0;
+  animation: ra-x-pop 0.3s linear both;
+}
+
+@keyframes ra-x-pop {
+  0%   { opacity: 0; transform: scale(0); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.ra-mcp-chaos-caption {
+  font-family: var(--font-display-cn);
+  font-size: 24px;
+  font-weight: 200;
+  color: var(--text-mute);
+  margin: 0;
+  letter-spacing: 0.06em;
+  animation: ra-fade-up var(--dur-base) linear both;
+  animation-delay: 1.4s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 7 — MCP solution (USB-C hub)
+ *  Animation: hub fades in, spokes draw, tools pop, frameworks slide
+ * ═══════════════════════════════════════════════════════════════════ */
+.ra-mcp-solution {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: ra-fade-in var(--dur-base) linear both;
+}
+
+.ra-mcp-solution-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+
+.ra-mcp-hub-area {
+  width: 100%;
+  max-width: 720px;
+  animation: ra-scale-in var(--dur-slow) linear both;
+  animation-delay: 0.2s;
+}
+
+.ra-mcp-hub-svg {
+  width: 100%;
+  height: auto;
+}
+
+.ra-mcp-clean-line {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  animation: ra-draw-line 0.4s linear both;
+}
+
+.ra-mcp-spoke {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: ra-draw-line 0.4s linear both;
+}
+
+.ra-mcp-tool {
+  opacity: 0;
+  animation: ra-tool-pop 0.3s linear both;
+}
+
+@keyframes ra-tool-pop {
+  0%   { opacity: 0; transform: scale(0.7); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.ra-mcp-connector-dot {
+  opacity: 0;
+  animation: ra-dot-fade 0.2s linear both;
+}
+
+@keyframes ra-dot-fade {
+  to { opacity: 1; }
+}
+
+/* Frameworks */
+.ra-mcp-frameworks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.ra-mcp-fw-label {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-mute);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.ra-mcp-fw-list {
+  display: flex;
+  gap: 20px;
+}
+
+.ra-mcp-fw {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.03em;
+  padding: 6px 16px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  opacity: 0;
+  transform: translateY(8px);
+  animation: ra-fw-slide 0.4s linear both;
+}
+
+@keyframes ra-fw-slide {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.ra-mcp-solution-caption {
+  font-family: var(--font-display-cn);
+  font-size: 22px;
+  font-weight: 200;
+  color: var(--accent);
+  margin: 0;
+  letter-spacing: 0.08em;
+  animation: ra-fade-up var(--dur-base) linear both;
+  animation-delay: 2.2s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Shared keyframes
+ * ═══════════════════════════════════════════════════════════════════ */
+@keyframes ra-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes ra-fade-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ra-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes ra-scale-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}

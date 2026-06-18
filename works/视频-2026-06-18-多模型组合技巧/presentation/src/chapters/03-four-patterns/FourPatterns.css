@@ -1,0 +1,1153 @@
+/* ═══════════════════════════════════════════════════════════════════
+ *  FourPatterns — Chapter 03 (8 steps)
+ *  Theme: swiss-ikb (Klein Blue, weight 200, hairline grid, flat rects)
+ *  CSS prefix: .fp-
+ * ═══════════════════════════════════════════════════════════════════ */
+
+/* ─── Stage ─── */
+.fp-stage {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ─── Shared: kicker ─── */
+.fp-kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  animation: fp-fade-down var(--dur-base) linear both;
+}
+
+.fp-kicker-line {
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.fp-kicker-text {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  color: var(--accent);
+}
+
+.fp-kicker-sep {
+  color: var(--text-faint);
+  font-family: var(--font-mono);
+  font-size: 14px;
+}
+
+.fp-kicker-en {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  color: var(--text-mute);
+}
+
+/* ─── Shared: hero text ─── */
+.fp-hero-cn {
+  font-family: var(--font-display-cn);
+  font-size: 96px;
+  font-weight: 200;
+  letter-spacing: 0.06em;
+  color: var(--text);
+  margin: 0;
+  line-height: 1;
+}
+
+.fp-hero-en {
+  font-family: var(--font-display-en);
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text-mute);
+  margin: 16px 0 0;
+  letter-spacing: 0.04em;
+}
+
+/* ─── Shared: pattern header ─── */
+.fp-pattern-label {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  color: var(--text-mute);
+  text-transform: uppercase;
+}
+
+.fp-pattern-title {
+  font-family: var(--font-display-cn);
+  font-size: 56px;
+  font-weight: 200;
+  color: var(--text);
+  margin: 0;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.fp-pattern-en {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+/* ─── Shared: model tag ─── */
+.fp-model-tag {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 16px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.fp-model-tag-name {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.fp-model-tag-role {
+  font-family: var(--font-display-cn);
+  font-size: 11px;
+  color: var(--text-mute);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 0 — Overview
+ *  Animation: hero clip-reveal, 4 cards stagger scale-in
+ * ═══════════════════════════════════════════════════════════════════ */
+.fp-overview {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  animation: fp-fade-in var(--dur-base) linear both;
+}
+
+.fp-overview-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 64px;
+}
+
+.fp-overview-title {
+  animation: fp-clip-reveal var(--dur-cinematic) linear both;
+}
+
+@keyframes fp-clip-reveal {
+  from { clip-path: inset(0 100% 0 0); opacity: 0; }
+  to   { clip-path: inset(0 0 0 0); opacity: 1; }
+}
+
+.fp-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: 1200px;
+}
+
+.fp-overview-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 32px 24px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  opacity: 0;
+  transform: scale(0.92);
+  animation: fp-card-scale 0.5s linear both;
+}
+
+@keyframes fp-card-scale {
+  to { opacity: 1; transform: scale(1); }
+}
+
+.fp-overview-card-num {
+  font-family: var(--font-display-en);
+  font-size: 48px;
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.fp-overview-card-name {
+  font-family: var(--font-display-cn);
+  font-size: 28px;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+
+.fp-overview-card-en {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 1 — Pipeline
+ *  Animation: nodes slide-up + fade, connectors draw
+ * ═══════════════════════════════════════════════════════════════════ */
+.fp-pipeline {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  animation: fp-fade-in var(--dur-base) linear both;
+}
+
+.fp-pipeline-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 48px;
+}
+
+.fp-pipeline-header {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  animation: fp-fade-down var(--dur-base) linear both;
+  animation-delay: 0.1s;
+}
+
+.fp-pipeline-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.fp-pipeline-node-wrap {
+  display: flex;
+  align-items: center;
+}
+
+.fp-pipeline-connector {
+  width: 80px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.fp-pipeline-connector svg {
+  width: 100%;
+  height: 100%;
+}
+
+.fp-pipeline-connector-line {
+  stroke-dasharray: 68;
+  stroke-dashoffset: 68;
+  animation: fp-draw-line 0.35s linear both;
+}
+
+.fp-pipeline-connector-arrow {
+  opacity: 0;
+  animation: fp-fade-in 0.2s linear both;
+}
+
+@keyframes fp-draw-line {
+  to { stroke-dashoffset: 0; }
+}
+
+.fp-pipeline-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 28px;
+  width: 180px;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fp-node-up 0.45s linear both;
+}
+
+@keyframes fp-node-up {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fp-pipeline-node-model {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.03em;
+}
+
+.fp-pipeline-node-task {
+  font-family: var(--font-display-cn);
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+
+.fp-pipeline-node-en {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--text-mute);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.fp-pipeline-principle {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  opacity: 0;
+  animation: fp-fade-up var(--dur-base) linear both;
+}
+
+.fp-pipeline-principle-line {
+  width: 48px;
+  height: 1px;
+  background: var(--accent);
+}
+
+.fp-pipeline-principle-text {
+  font-family: var(--font-display-cn);
+  font-size: 24px;
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+
+.fp-pipeline-example {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  opacity: 0;
+  animation: fp-fade-up var(--dur-base) linear both;
+}
+
+.fp-pipeline-example-label {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-faint);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border: 1px solid var(--rule);
+}
+
+.fp-pipeline-example-text {
+  font-family: var(--font-display-cn);
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text-mute);
+  letter-spacing: 0.04em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 2 — Voting
+ *  Animation: question fades, split lines draw, answers stagger, consensus drops
+ * ═══════════════════════════════════════════════════════════════════ */
+.fp-voting {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: fp-fade-in var(--dur-base) linear both;
+}
+
+.fp-voting-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fp-voting-header {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  animation: fp-fade-down var(--dur-base) linear both;
+  animation-delay: 0.1s;
+}
+
+.fp-voting-diagram {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+}
+
+.fp-voting-question {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 20px 28px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  flex-shrink: 0;
+  opacity: 0;
+  transform: scale(0.9);
+  animation: fp-node-up 0.4s linear both;
+}
+
+.fp-voting-question-label {
+  font-family: var(--font-display-cn);
+  font-size: 20px;
+  font-weight: 400;
+  color: var(--accent);
+}
+
+.fp-voting-question-en {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  opacity: 0.7;
+  letter-spacing: 0.1em;
+}
+
+.fp-voting-split {
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0;
+}
+
+.fp-voting-split-line {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: fp-draw-line 0.5s linear both;
+}
+
+.fp-voting-answers {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.fp-voting-answer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  border: 1px solid var(--rule);
+  background: var(--surface);
+  opacity: 0;
+  transform: translateX(20px);
+  animation: fp-answer-slide 0.4s linear both;
+}
+
+@keyframes fp-answer-slide {
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.fp-voting-answer--match {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.fp-voting-answer--diff {
+  opacity: 0.7;
+}
+
+.fp-voting-answer-model {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  min-width: 90px;
+}
+
+.fp-voting-answer--match .fp-voting-answer-model {
+  color: var(--accent);
+}
+
+.fp-voting-answer-text {
+  font-family: var(--font-display-cn);
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text);
+}
+
+.fp-voting-answer-mark {
+  font-family: var(--font-mono);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-faint);
+}
+
+.fp-voting-answer-mark--match {
+  color: var(--accent);
+}
+
+.fp-voting-consensus {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  opacity: 0;
+  animation: fp-fade-up var(--dur-slow) linear both;
+}
+
+.fp-voting-consensus-icon {
+  width: 28px;
+  height: 28px;
+}
+
+.fp-voting-consensus-text {
+  font-family: var(--font-display-cn);
+  font-size: 22px;
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: 0.06em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 3 — Voting boundary (facts ✓ vs creativity ✗)
+ *  Animation: left/right slide in from sides
+ * ═══════════════════════════════════════════════════════════════════ */
+.fp-boundary {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  animation: fp-fade-in var(--dur-base) linear both;
+}
+
+.fp-boundary-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 48px;
+}
+
+.fp-boundary-header {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  animation: fp-fade-down var(--dur-base) linear both;
+}
+
+.fp-boundary-subtitle {
+  font-family: var(--font-display-cn);
+  font-size: 32px;
+  font-weight: 200;
+  color: var(--text-mute);
+  letter-spacing: 0.06em;
+}
+
+.fp-boundary-compare {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.fp-boundary-side {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  padding: 40px 32px;
+}
+
+.fp-boundary-side--yes {
+  animation: fp-slide-left var(--dur-slow) linear both;
+}
+
+.fp-boundary-side--no {
+  animation: fp-slide-right var(--dur-slow) linear both;
+}
+
+@keyframes fp-slide-left {
+  from { opacity: 0; transform: translateX(-30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fp-slide-right {
+  from { opacity: 0; transform: translateX(30px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+.fp-boundary-check,
+.fp-boundary-cross {
+  width: 56px;
+  height: 56px;
+}
+
+.fp-boundary-check svg,
+.fp-boundary-cross svg {
+  width: 100%;
+  height: 100%;
+}
+
+.fp-boundary-side-label {
+  font-family: var(--font-display-cn);
+  font-size: 36px;
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: 0.08em;
+}
+
+.fp-boundary-side-label--mute {
+  color: var(--text-mute);
+}
+
+.fp-boundary-tags {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.fp-boundary-tag {
+  font-family: var(--font-display-cn);
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--accent);
+  padding: 8px 18px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  letter-spacing: 0.04em;
+}
+
+.fp-boundary-tag--mute {
+  color: var(--text-mute);
+  border-color: var(--rule);
+  background: var(--surface-2);
+}
+
+.fp-boundary-desc {
+  font-family: var(--font-display-cn);
+  font-size: 20px;
+  font-weight: 200;
+  color: var(--text-mute);
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.04em;
+}
+
+.fp-boundary-desc--mute {
+  color: var(--text-faint);
+  font-style: italic;
+}
+
+.fp-boundary-divider {
+  width: 1px;
+  background: var(--rule);
+  margin: 20px 0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 4 — Collaboration (triangle diagram)
+ *  Animation: nodes scale-in, cyclic arrows draw
+ * ═══════════════════════════════════════════════════════════════════ */
+.fp-collab {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: fp-fade-in var(--dur-base) linear both;
+}
+
+.fp-collab-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.fp-collab-header {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  animation: fp-fade-down var(--dur-base) linear both;
+  animation-delay: 0.1s;
+}
+
+.fp-collab-diagram {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fp-collab-svg {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+}
+
+.fp-collab-node {
+  opacity: 0;
+  transform: scale(0.7);
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: fp-node-scale-in 0.5s linear both;
+}
+
+@keyframes fp-node-scale-in {
+  to { opacity: 1; transform: scale(1); }
+}
+
+.fp-collab-arrow {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: fp-draw-line 0.6s linear both;
+}
+
+.fp-collab-center {
+  opacity: 0;
+  animation: fp-fade-in var(--dur-base) linear both;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 5 — Frameworks
+ *  Animation: cards stagger in, loop tag fades up
+ * ═══════════════════════════════════════════════════════════════════ */
+.fp-frameworks {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: fp-fade-in var(--dur-base) linear both;
+}
+
+.fp-frameworks-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 48px;
+}
+
+.fp-frameworks-header {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  opacity: 0;
+  animation: fp-fade-up var(--dur-base) linear both;
+}
+
+.fp-frameworks-label {
+  font-family: var(--font-display-cn);
+  font-size: 48px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.04em;
+}
+
+.fp-frameworks-sub {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-mute);
+  letter-spacing: 0.1em;
+}
+
+.fp-frameworks-grid {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+}
+
+.fp-framework-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 32px 40px;
+  width: 240px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fp-node-up 0.45s linear both;
+}
+
+.fp-framework-card-name {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.fp-framework-card-desc {
+  font-family: var(--font-display-cn);
+  font-size: 18px;
+  font-weight: 300;
+  color: var(--text);
+}
+
+.fp-framework-card-en {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  opacity: 0.6;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fp-frameworks-tag {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: center;
+  opacity: 0;
+  animation: fp-fade-up var(--dur-slow) linear both;
+}
+
+.fp-frameworks-tag-icon {
+  width: 32px;
+  height: 32px;
+}
+
+.fp-frameworks-tag-icon svg {
+  width: 100%;
+  height: 100%;
+  animation: fp-spin 4s linear infinite;
+}
+
+@keyframes fp-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.fp-frameworks-tag-text {
+  font-family: var(--font-display-cn);
+  font-size: 22px;
+  font-weight: 200;
+  color: var(--text-mute);
+  letter-spacing: 0.06em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 6 — Routing (central router SVG)
+ *  Animation: center scales in, paths draw out, targets pop
+ * ═══════════════════════════════════════════════════════════════════ */
+.fp-routing {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fp-fade-in var(--dur-base) linear both;
+}
+
+.fp-routing-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fp-routing-header {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  animation: fp-fade-down var(--dur-base) linear both;
+  animation-delay: 0.1s;
+}
+
+.fp-routing-diagram {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fp-routing-svg {
+  width: 100%;
+  max-width: 700px;
+  height: auto;
+}
+
+.fp-routing-center {
+  opacity: 0;
+  transform: scale(0.8);
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: fp-node-scale-in 0.5s linear both;
+}
+
+.fp-routing-entry {
+  opacity: 0;
+  animation: fp-fade-in var(--dur-base) linear both;
+}
+
+.fp-routing-entry-line {
+  stroke-dasharray: 120;
+  stroke-dashoffset: 120;
+  animation: fp-draw-line 0.4s linear both;
+  animation-delay: 0.4s;
+}
+
+.fp-routing-path {
+  stroke-dasharray: 300;
+  stroke-dashoffset: 300;
+  animation: fp-draw-line 0.5s linear both;
+}
+
+.fp-routing-type {
+  opacity: 0;
+  animation: fp-fade-in 0.3s linear both;
+}
+
+.fp-routing-target {
+  opacity: 0;
+  transform: scale(0.8);
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: fp-node-scale-in 0.35s linear both;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Step 7 — OpenRouter platform
+ *  Animation: entry slides, hub scales, fan-out lines draw, model chips stagger
+ * ═══════════════════════════════════════════════════════════════════ */
+.fp-platform {
+  position: absolute;
+  inset: 0;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  animation: fp-fade-in var(--dur-base) linear both;
+}
+
+.fp-platform-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 40px;
+}
+
+.fp-platform-header {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  opacity: 0;
+  animation: fp-fade-down var(--dur-base) linear both;
+}
+
+.fp-platform-name {
+  font-family: var(--font-mono);
+  font-size: 48px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+
+.fp-platform-tag {
+  font-family: var(--font-display-cn);
+  font-size: 24px;
+  font-weight: 200;
+  color: var(--text-mute);
+  letter-spacing: 0.06em;
+}
+
+.fp-platform-diagram {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.fp-platform-entry {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  opacity: 0;
+  animation: fp-fade-in var(--dur-base) linear both;
+  animation-delay: 0.4s;
+}
+
+.fp-platform-entry-box {
+  padding: 12px 24px;
+  border: 1px solid var(--accent);
+  background: var(--accent-soft);
+}
+
+.fp-platform-entry-text {
+  font-family: var(--font-mono);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+.fp-platform-entry-arrow {
+  width: 60px;
+  height: 8px;
+}
+
+.fp-platform-entry-arrow svg {
+  width: 100%;
+  height: 100%;
+}
+
+.fp-platform-arrow-line {
+  stroke-dasharray: 52;
+  stroke-dashoffset: 52;
+  animation: fp-draw-line 0.3s linear both;
+  animation-delay: 0.6s;
+}
+
+.fp-platform-arrow-head {
+  opacity: 0;
+  animation: fp-fade-in 0.2s linear both;
+  animation-delay: 0.75s;
+}
+
+.fp-platform-hub {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 36px;
+  background: var(--accent);
+  opacity: 0;
+  transform: scale(0.9);
+  animation: fp-node-scale-in 0.4s linear both;
+}
+
+.fp-platform-hub-text {
+  font-family: var(--font-mono);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--surface);
+  letter-spacing: 0.03em;
+}
+
+.fp-platform-hub-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--surface);
+  opacity: 0.7;
+  letter-spacing: 0.1em;
+}
+
+.fp-platform-fanout {
+  width: 100%;
+  max-width: 560px;
+}
+
+.fp-platform-fanout-svg {
+  width: 100%;
+  height: 120px;
+}
+
+.fp-platform-fanout-line {
+  stroke-dasharray: 200;
+  stroke-dashoffset: 200;
+  animation: fp-draw-line 0.4s linear both;
+}
+
+.fp-platform-models {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  max-width: 800px;
+}
+
+.fp-platform-model-chip {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--accent);
+  padding: 8px 16px;
+  border: 1px solid var(--accent);
+  background: var(--surface);
+  letter-spacing: 0.03em;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: fp-node-up 0.3s linear both;
+}
+
+.fp-platform-tagline {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  opacity: 0;
+  animation: fp-fade-up var(--dur-slow) linear both;
+}
+
+.fp-platform-tagline-num {
+  font-family: var(--font-display-en);
+  font-size: 56px;
+  font-weight: 200;
+  color: var(--accent);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.fp-platform-tagline-arrow {
+  font-family: var(--font-display-en);
+  font-size: 40px;
+  font-weight: 200;
+  color: var(--text-faint);
+}
+
+.fp-platform-tagline-text {
+  font-family: var(--font-display-cn);
+  font-size: 28px;
+  font-weight: 200;
+  color: var(--text);
+  letter-spacing: 0.06em;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+ *  Shared keyframes
+ * ═══════════════════════════════════════════════════════════════════ */
+@keyframes fp-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes fp-fade-down {
+  from { opacity: 0; transform: translateY(-12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fp-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fp-scale-in {
+  from { opacity: 0; transform: scale(0.85); }
+  to   { opacity: 1; transform: scale(1); }
+}
