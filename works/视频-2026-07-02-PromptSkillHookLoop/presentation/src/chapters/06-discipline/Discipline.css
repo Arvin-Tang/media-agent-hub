@@ -1,0 +1,129 @@
+.dp-scene {
+  position: relative;
+  min-height: 100%;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.dp-scene::before {
+  content: "";
+  position: absolute;
+  inset: 92px;
+  border-left: var(--rule-w) var(--rule-style) var(--rule);
+  border-right: var(--rule-w) var(--rule-style) var(--rule);
+}
+
+.dp-warnings,
+.dp-extract,
+.dp-close {
+  position: relative;
+  z-index: 2;
+  min-height: 820px;
+}
+
+.dp-warnings {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+.dp-alert {
+  color: var(--accent);
+  font-size: 320px;
+  text-align: center;
+}
+
+.dp-risk-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dp-risk {
+  min-height: 138px;
+  padding: 30px 36px;
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  align-items: center;
+}
+
+.dp-risk strong {
+  font-size: 46px;
+  line-height: 1.08;
+}
+
+.dp-extract {
+  display: grid;
+  grid-template-columns: 1fr 150px 1fr;
+  gap: var(--space-5);
+  align-items: center;
+}
+
+.dp-chat,
+.dp-flow {
+  min-height: 520px;
+  padding: 42px;
+}
+
+.dp-chat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.dp-chat p {
+  margin: 0;
+  padding: 22px 24px;
+  border: var(--rule-w) var(--rule-style) var(--rule);
+  font-family: var(--font-body);
+  font-size: 28px;
+  line-height: 1.25;
+  color: var(--text-2);
+}
+
+.dp-arrow {
+  font-family: var(--font-display-en);
+  font-size: 110px;
+  line-height: 1;
+  color: var(--accent);
+  text-align: center;
+}
+
+.dp-flow {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-color: var(--accent);
+}
+
+.dp-flow h2 {
+  margin: var(--space-5) 0 0;
+  font-size: 86px;
+  line-height: 1.02;
+}
+
+.dp-close {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-5);
+}
+
+.dp-close h1 {
+  margin: 0;
+  font-size: 106px;
+  line-height: 1.02;
+  max-width: 12ch;
+}
+
+.dp-close h1 span {
+  color: var(--accent);
+}
+
+.dp-close p {
+  margin: var(--space-5) 0 0;
+  font-family: var(--font-body);
+  font-size: 34px;
+  color: var(--text-2);
+}

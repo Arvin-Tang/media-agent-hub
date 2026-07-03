@@ -1,0 +1,158 @@
+.fs-scene {
+  position: relative;
+  min-height: 100%;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.fs-scene::before {
+  content: "";
+  position: absolute;
+  inset: var(--space-7);
+  border: var(--rule-w) var(--rule-style) var(--rule);
+  opacity: 0.8;
+}
+
+.fs-stack,
+.fs-compare,
+.fs-ending {
+  position: relative;
+  z-index: 2;
+  min-height: 820px;
+}
+
+.fs-stack {
+  display: grid;
+  grid-template-columns: 0.78fr 1.22fr;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+.fs-copy h1,
+.fs-ending h1 {
+  margin: var(--space-4) 0 0;
+  font-size: 92px;
+  line-height: 1.03;
+  max-width: 8ch;
+}
+
+.fs-layers {
+  display: grid;
+  gap: 24px;
+}
+
+.fs-layer {
+  min-height: 170px;
+  padding: 32px 38px;
+  display: grid;
+  grid-template-columns: 160px 1fr 1fr;
+  gap: var(--space-5);
+  align-items: center;
+  background: var(--surface-2);
+}
+
+.fs-layer:nth-child(2) { margin-left: 76px; background: var(--surface-3); }
+.fs-layer:nth-child(3) { margin-left: 152px; }
+
+.fs-layer strong {
+  font-family: var(--font-mono);
+  font-size: 44px;
+}
+
+.fs-layer em {
+  font-style: normal;
+  font-size: 36px;
+  color: var(--accent);
+}
+
+.fs-compare {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+.fs-chat,
+.fs-files {
+  min-height: 580px;
+  padding: 42px;
+  background: var(--surface-2);
+}
+
+.fs-files {
+  background: var(--surface-3);
+}
+
+.fs-chat h2,
+.fs-files h2 {
+  margin: 74px 0 0;
+  font-size: 74px;
+  line-height: 1.05;
+}
+
+.fs-chat p {
+  margin: 62px 0 0;
+  font-size: 42px;
+  color: var(--text-2);
+  border-top: var(--rule-w) var(--rule-style) var(--rule);
+  padding-top: 34px;
+}
+
+.fs-file-grid {
+  margin-top: 66px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+}
+
+.fs-file-grid span {
+  min-height: 112px;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+  font-size: 34px;
+  text-align: center;
+  background: var(--accent-soft);
+  border: var(--rule-w) var(--rule-style) var(--rule);
+}
+
+.fs-ending {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fs-equation {
+  display: flex;
+  align-items: center;
+  gap: 42px;
+  font-family: var(--font-mono);
+  font-size: 72px;
+  color: var(--accent);
+}
+
+.fs-equation i {
+  width: 260px;
+  height: 5px;
+  background: var(--accent);
+  box-shadow: 0 0 34px var(--accent-glow);
+  position: relative;
+}
+
+.fs-equation i::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: -12px;
+  width: 28px;
+  height: 28px;
+  border-top: 5px solid var(--accent);
+  border-right: 5px solid var(--accent);
+  transform: rotate(45deg);
+}
+
+.fs-ending h1 {
+  margin-top: 58px;
+  max-width: 12ch;
+  font-size: 98px;
+}

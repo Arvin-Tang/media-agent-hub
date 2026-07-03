@@ -1,0 +1,138 @@
+.sm-scene {
+  position: relative;
+  min-height: 100%;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.sm-scene::before {
+  content: "";
+  position: absolute;
+  inset: 76px;
+  border: var(--rule-w) var(--rule-style) var(--rule);
+}
+
+.sm-fold,
+.sm-fields,
+.sm-stack-view {
+  position: relative;
+  z-index: 2;
+  min-height: 820px;
+}
+
+.sm-fold {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+.sm-prompts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sm-strip {
+  min-height: 74px;
+  padding: 22px 28px;
+  border: var(--rule-w) var(--rule-style) var(--rule);
+  background: var(--surface-2);
+  font-family: var(--font-mono);
+  font-size: 24px;
+  color: var(--text-mute);
+}
+
+.sm-book {
+  min-height: 610px;
+  padding: 52px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-color: var(--accent);
+}
+
+.sm-book h1 {
+  margin: 0;
+  font-size: 96px;
+  line-height: 1.04;
+  max-width: 8ch;
+}
+
+.sm-book h1 span {
+  color: var(--accent);
+}
+
+.sm-fields {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-7);
+}
+
+.sm-field-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+
+.sm-field {
+  min-height: 220px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sm-field .hero-num {
+  color: var(--accent);
+  font-size: 78px;
+}
+
+.sm-field strong {
+  font-size: 40px;
+  line-height: 1.12;
+}
+
+.sm-stack-view {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: var(--space-7);
+  align-items: center;
+}
+
+.sm-stack-copy h2 {
+  margin: var(--space-4) 0 0;
+  max-width: 9ch;
+  font-size: 82px;
+  line-height: 1.06;
+}
+
+.sm-file-stack {
+  position: relative;
+  min-height: 650px;
+}
+
+.sm-file {
+  position: absolute;
+  left: 0;
+  right: 0;
+  min-height: 112px;
+  padding: 26px 32px;
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  align-items: center;
+}
+
+.sm-file:nth-child(1) { top: 0; }
+.sm-file:nth-child(2) { top: 96px; }
+.sm-file:nth-child(3) { top: 192px; }
+.sm-file:nth-child(4) { top: 288px; }
+.sm-file:nth-child(5) { top: 384px; }
+.sm-file:nth-child(6) { top: 480px; border-color: var(--accent); }
+
+.sm-file strong {
+  font-family: var(--font-mono);
+  font-size: 30px;
+  line-height: 1.1;
+}

@@ -1,0 +1,112 @@
+.ac-scene {
+  position: relative;
+  min-height: 100%;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.ac-scene::before,
+.ac-scene::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border: var(--rule-w) var(--rule-style) var(--rule);
+}
+
+.ac-scene::before { inset: 80px; }
+.ac-scene::after { inset: 158px 220px; opacity: 0.5; }
+
+.ac-todos {
+  position: relative;
+  z-index: 2;
+  min-height: 820px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.ac-todos h1 {
+  margin: var(--space-4) 0 var(--space-9);
+  font-size: 92px;
+  line-height: 1;
+}
+
+.ac-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-5);
+}
+
+.ac-todo {
+  min-height: 300px;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.ac-todo strong {
+  font-family: var(--font-display-en);
+  font-size: 58px;
+  color: var(--accent);
+}
+
+.ac-todo p {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.2;
+  color: var(--text-2);
+}
+
+.ac-final {
+  position: relative;
+  z-index: 2;
+  min-height: 820px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.ac-blueprint {
+  position: relative;
+  width: 680px;
+  height: 620px;
+  border: var(--bw-2) solid var(--accent);
+  box-shadow: 0 0 74px var(--accent-glow);
+}
+
+.ac-blueprint::before,
+.ac-blueprint::after {
+  content: "";
+  position: absolute;
+  background: var(--accent);
+  opacity: 0.7;
+}
+
+.ac-blueprint::before { left: 50%; top: 0; bottom: 0; width: 2px; }
+.ac-blueprint::after { top: 50%; left: 0; right: 0; height: 2px; }
+
+.ac-blueprint span {
+  position: absolute;
+  width: 210px;
+  height: 120px;
+  display: grid;
+  place-items: center;
+  background: var(--surface-2);
+  border: var(--bw-1) solid var(--rule);
+  font-family: var(--font-display-en);
+  font-size: 34px;
+}
+
+.ac-layer-1 { left: 60px; top: 80px; }
+.ac-layer-2 { right: 60px; top: 80px; }
+.ac-layer-3 { left: 60px; bottom: 80px; }
+.ac-layer-4 { right: 60px; bottom: 80px; color: var(--accent); }
+
+.ac-quote h2 {
+  margin: var(--space-5) 0 0;
+  font-size: 92px;
+  line-height: 1.06;
+  color: var(--accent);
+}

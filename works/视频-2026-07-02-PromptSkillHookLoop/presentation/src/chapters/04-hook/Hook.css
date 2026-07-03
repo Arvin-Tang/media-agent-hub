@@ -1,0 +1,126 @@
+.hk-scene {
+  position: relative;
+  min-height: 100%;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.hk-scene::before {
+  content: "";
+  position: absolute;
+  inset: 50% 0 auto;
+  border-top: var(--bw-2) solid var(--rule);
+}
+
+.hk-manual {
+  position: relative;
+  z-index: 2;
+  min-height: 820px;
+  display: grid;
+  grid-template-columns: 0.75fr 1.25fr;
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.hk-skill,
+.hk-trigger {
+  min-height: 500px;
+  padding: 52px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hk-skill h2 {
+  margin: var(--space-5) 0 0;
+  font-size: 72px;
+  line-height: 1.08;
+  color: var(--text-2);
+}
+
+.hk-trigger h1 {
+  margin: var(--space-5) 0 0;
+  font-size: 88px;
+  line-height: 1.05;
+  color: var(--accent);
+}
+
+.hk-triggers {
+  position: relative;
+  z-index: 2;
+  min-height: 820px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-5);
+  align-items: stretch;
+}
+
+.hk-trigger-item {
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hk-trigger-item strong {
+  display: block;
+  font-size: 48px;
+  line-height: 1.12;
+}
+
+.hk-trigger-item i {
+  width: 86px;
+  height: 86px;
+  border: var(--bw-2) solid var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 42px var(--accent-glow);
+}
+
+.hk-trigger-item:nth-child(even) {
+  transform: translateY(70px);
+}
+
+.hk-timeline {
+  position: relative;
+  z-index: 2;
+  min-height: 820px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.hk-timeline h2 {
+  margin: var(--space-4) 0 var(--space-9);
+  max-width: 13ch;
+  font-size: 86px;
+  line-height: 1.06;
+}
+
+.hk-line {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--space-5);
+}
+
+.hk-line::before {
+  content: "";
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 50%;
+  border-top: var(--bw-2) solid var(--accent);
+}
+
+.hk-line span {
+  position: relative;
+  min-height: 150px;
+  padding: 24px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  background: var(--surface-2);
+  border: var(--bw-1) solid var(--rule);
+  font-size: 30px;
+  color: var(--text-2);
+}

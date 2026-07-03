@@ -1,0 +1,152 @@
+.fl-scene {
+  position: relative;
+  min-height: 100%;
+  color: var(--text);
+  overflow: hidden;
+}
+
+.fl-scene::before,
+.fl-scene::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border: var(--rule-w) var(--rule-style) var(--rule);
+}
+
+.fl-scene::before { inset: 92px 126px; }
+.fl-scene::after { inset: 154px 188px; opacity: 0.45; }
+
+.fl-split {
+  position: relative;
+  z-index: 2;
+  min-height: 820px;
+  display: grid;
+  grid-template-columns: 0.9fr 180px 1.2fr;
+  align-items: center;
+  gap: var(--space-7);
+}
+
+.fl-score,
+.fl-structure {
+  min-height: 520px;
+  padding: 52px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fl-score h2 {
+  margin: var(--space-5) 0;
+  font-family: var(--font-mono);
+  font-size: 116px;
+  line-height: 1;
+  color: var(--text-2);
+}
+
+.fl-structure h1 {
+  margin: var(--space-5) 0;
+  font-family: var(--font-display-cn);
+  font-size: 98px;
+  line-height: 1.05;
+  color: var(--accent);
+}
+
+.fl-score p,
+.fl-structure p {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.25;
+  color: var(--text-2);
+}
+
+.fl-vs {
+  justify-self: center;
+  width: 150px;
+  height: 150px;
+  display: grid;
+  place-items: center;
+  border: var(--bw-2) solid var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  box-shadow: 0 0 54px var(--accent-glow);
+}
+
+.fl-blueprint {
+  position: relative;
+  z-index: 2;
+  min-height: 820px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.fl-blueprint h2 {
+  margin: var(--space-4) 0 var(--space-9);
+  font-size: 90px;
+  line-height: 1;
+}
+
+.fl-node-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-7);
+}
+
+.fl-node-row::before {
+  content: "";
+  position: absolute;
+  left: 6%;
+  right: 6%;
+  top: 50%;
+  border-top: var(--bw-2) solid var(--accent);
+  opacity: 0.55;
+}
+
+.fl-node {
+  position: relative;
+  min-height: 260px;
+  padding: 34px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--surface-2);
+  border: var(--bw-2) solid var(--accent);
+  box-shadow: 0 0 46px var(--accent-glow);
+}
+
+.fl-node strong {
+  font-family: var(--font-display-en);
+  font-size: 48px;
+  color: var(--text);
+}
+
+.fl-quadrants {
+  position: relative;
+  z-index: 2;
+  min-height: 820px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-5);
+}
+
+.fl-quad {
+  padding: 46px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.fl-quad h2 {
+  margin: var(--space-7) 0 0;
+  font-family: var(--font-display-en);
+  font-size: 74px;
+  color: var(--accent);
+}
+
+.fl-quad p {
+  margin: 0;
+  font-size: 44px;
+  line-height: 1.15;
+  color: var(--text-2);
+}
